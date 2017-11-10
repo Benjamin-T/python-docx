@@ -4,8 +4,9 @@
 Custom element classes related to paragraphs (CT_P).
 """
 
-from ..ns import qn
-from ..xmlchemy import BaseOxmlElement, OxmlElement, ZeroOrMore, ZeroOrOne
+from docx.oxml.ns import qn
+from docx.oxml.xmlchemy import (BaseOxmlElement, OxmlElement, ZeroOrMore,
+                                ZeroOrOne)
 
 
 class CT_P(BaseOxmlElement):
@@ -14,6 +15,8 @@ class CT_P(BaseOxmlElement):
     """
     pPr = ZeroOrOne('w:pPr')
     r = ZeroOrMore('w:r')
+    bookmarkStart = ZeroOrMore('w:bookmarkStart', successors=('w:sectPr',))
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd', successors=('w:sectPr',))
 
     def _insert_pPr(self, pPr):
         self.insert(0, pPr)

@@ -8,9 +8,7 @@ corresponding to Open XML elements.
 from __future__ import absolute_import
 
 from lxml import etree
-
-from .ns import NamespacePrefixedTag, nsmap
-
+from docx.oxml.ns import NamespacePrefixedTag, nsmap
 
 # configure XML parser
 element_class_lookup = etree.ElementNamespaceClassLookup()
@@ -200,3 +198,7 @@ from .text.run import CT_Br, CT_R, CT_Text
 register_element_cls('w:br', CT_Br)
 register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
+
+from .bookmark import CT_BookmarkStart, CT_BookmarkEnd
+register_element_cls('w:bookmarkEnd', CT_BookmarkEnd)
+register_element_cls('w:bookmarkStart', CT_BookmarkStart)

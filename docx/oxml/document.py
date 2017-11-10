@@ -5,7 +5,7 @@ Custom element classes that correspond to the document part, e.g.
 <w:document>.
 """
 
-from .xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
+from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
 
 
 class CT_Document(BaseOxmlElement):
@@ -30,6 +30,8 @@ class CT_Body(BaseOxmlElement):
     """
     p = ZeroOrMore('w:p', successors=('w:sectPr',))
     tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
+    bookmarkStart = ZeroOrMore('w:bookmarkStart', successors=('w:sectPr',))
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd', successors=('w:sectPr',))
     sectPr = ZeroOrOne('w:sectPr', successors=())
 
     def add_section_break(self):

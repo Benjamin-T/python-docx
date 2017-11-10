@@ -4,15 +4,15 @@
 |Document| and closely related objects
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
-from .blkcntnr import BlockItemContainer
-from .enum.section import WD_SECTION
-from .enum.text import WD_BREAK
-from .section import Section, Sections
-from .shared import ElementProxy, Emu
+from docx.blkcntnr import BlockItemContainer
+from docx.enum.section import WD_SECTION
+from docx.enum.text import WD_BREAK
+from docx.section import Section, Sections
+from docx.shared import ElementProxy, Emu
+from docx.text.bookmarks import Bookmarks
 
 
 class Document(ElementProxy):
@@ -27,6 +27,15 @@ class Document(ElementProxy):
         super(Document, self).__init__(element)
         self._part = part
         self.__body = None
+
+    def bookmarks(self):
+        return Bookmarks(self._element.body)
+
+    def start_bookmark(self, name):
+        return self._body.start_bookmark(name)
+
+    def end_bookmark(self, bookmark=None):
+        return self._body.end_bookmark(bookmark)
 
     def add_heading(self, text='', level=1):
         """
@@ -201,6 +210,7 @@ class _Body(BlockItemContainer):
     Proxy for ``<w:body>`` element in this document, having primarily a
     container role.
     """
+
     def __init__(self, body_elm, parent):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm

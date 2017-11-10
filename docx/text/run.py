@@ -6,14 +6,15 @@ Run-related proxy objects for python-docx, Run in particular.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from ..enum.style import WD_STYLE_TYPE
-from ..enum.text import WD_BREAK
-from .font import Font
-from ..shape import InlineShape
-from ..shared import Parented
+from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_BREAK
+from docx.shape import InlineShape
+from docx.shared import Parented
+from docx.text.bookmarks import Bookmark, BookmarkParent
+from docx.text.font import Font
 
 
-class Run(Parented):
+class Run(Parented, BookmarkParent):
     """
     Proxy object wrapping ``<w:r>`` element. Several of the properties on Run
     take a tri-state value, |True|, |False|, or |None|. |True| and |False|

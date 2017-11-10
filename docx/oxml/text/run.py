@@ -4,11 +4,10 @@
 Custom element classes related to text runs (CT_R).
 """
 
-from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType
-from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
-)
+from docx.oxml.ns import qn
+from docx.oxml.simpletypes import ST_BrClear, ST_BrType
+from docx.oxml.xmlchemy import (BaseOxmlElement, OptionalAttribute, ZeroOrMore,
+                                ZeroOrOne)
 
 
 class CT_Br(BaseOxmlElement):
@@ -29,6 +28,8 @@ class CT_R(BaseOxmlElement):
     cr = ZeroOrMore('w:cr')
     tab = ZeroOrMore('w:tab')
     drawing = ZeroOrMore('w:drawing')
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd', successors=('w:sectPr',))
+    bookmarkStart = ZeroOrMore('w:bookmarkStart', successors=('w:sectPr',))
 
     def _insert_rPr(self, rPr):
         self.insert(0, rPr)
