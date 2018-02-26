@@ -7,7 +7,12 @@ Feature: Access document collections
   Scenario: Access the inline shapes collection of a document
      Given a document having inline shapes
       Then document.inline_shapes is an InlineShapes object
+  
 
+  Scenario: Access the bookmarks collection of a document
+	   Given a document having bookmarks
+	    Then document.bookmarks is a Bookmarks object
+ 
 
   Scenario: Access the paragraphs in the document body as a list
      Given a document containing three paragraphs
@@ -23,7 +28,8 @@ Feature: Access document collections
     Given a document having styles
      Then document.styles is a Styles object
 
-
+  
   Scenario: Access the tables collection of a document
     Given a document having three tables
      Then document.tables is a list containing three tables
+

@@ -10,17 +10,17 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.section import WD_ORIENT, WD_SECTION
+from docx.section import Sections
 from docx.shape import InlineShapes
 from docx.shared import Inches
-from docx.section import Sections
 from docx.styles.styles import Styles
 from docx.table import Table
+from docx.text.bookmarks import Bookmarks
 from docx.text.paragraph import Paragraph
-
 from helpers import test_docx, test_file
 
-
 # given ===================================================
+
 
 @given('a blank document')
 def given_a_blank_document(context):
@@ -59,7 +59,13 @@ def given_a_single_section_document_having_portrait_layout(context):
     context.original_dimensions = (section.page_width, section.page_height)
 
 
+@given('a document having bookmarks')
+def given_a_document_having_bookmarks(context):
+    context.document = Document(test_docx('doc-access-bookmarks'))
+
+
 # when ====================================================
+
 
 @when('I add a 2 x 2 table specifying only row and column count')
 def when_add_2x2_table_specifying_only_row_and_col_count(context):
@@ -258,3 +264,9 @@ def then_the_style_of_the_last_paragraph_is_style(context, style_name):
     assert paragraph.style.name == style_name, (
         'got %s' % paragraph.style.name
     )
+
+
+@then('document.bookmarks is a Bookmarks object')
+def then_document_bookmarks_is_a_Bookmarks_object(context):
+    bookmarks = context.document.bookmarks
+    assert isinstance(bookmarks, Bookmarks)
