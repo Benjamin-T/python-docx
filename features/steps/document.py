@@ -15,6 +15,7 @@ from docx.shared import Inches
 from docx.section import Sections
 from docx.styles.styles import Styles
 from docx.table import Table
+from docx.text.bookmarks import Bookmarks, Bookmark
 from docx.text.paragraph import Paragraph
 
 from helpers import test_docx, test_file
@@ -58,6 +59,9 @@ def given_a_single_section_document_having_portrait_layout(context):
     section = context.document.sections[-1]
     context.original_dimensions = (section.page_width, section.page_height)
 
+@given('a document having three bookmarks')
+def given_a_document_having_three_bookmarks(context):
+    context.document = Document(test_docx('doc-access-bookmarks'))
 
 # when ====================================================
 
@@ -258,3 +262,14 @@ def then_the_style_of_the_last_paragraph_is_style(context, style_name):
     assert paragraph.style.name == style_name, (
         'got %s' % paragraph.style.name
     )
+
+
+@then('document.bookmarks is a list of three bookmarks')
+def then_document_bookmarks_is_a_list_containing_three_bookmarks(context):
+    bookmarks = context.document.bookmarks
+    bookmark = bookmarks[0]
+    assert isinstance(bookmarks, Bookmarks)
+    assert len(bookmarks) == 3
+    for bookmark in bookmarks:
+        assert isinstance(bookmark, Bookmark)
+
