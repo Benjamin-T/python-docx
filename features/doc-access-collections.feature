@@ -27,3 +27,7 @@ Feature: Access document collections
   Scenario: Access the tables collection of a document
     Given a document having three tables
      Then document.tables is a list containing three tables
+  @wip
+  Scenario: Access the bookmarks collection of a document
+    Given a document having three bookmarks
+      Then document.bookmarks is a list of three bookmarks
