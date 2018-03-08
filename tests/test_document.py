@@ -4,13 +4,12 @@
 Test suite for the docx.document module
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import pytest
 
-from docx.document import _Body, Document
+from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
@@ -21,13 +20,13 @@ from docx.shape import InlineShape, InlineShapes
 from docx.shared import Length
 from docx.styles.styles import Styles
 from docx.table import Table
+from docx.text.bookmarks import Bookmarks
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
 from .unitutil.cxml import element, xml
-from .unitutil.mock import (
-    class_mock, instance_mock, method_mock, property_mock
-)
+from .unitutil.mock import (class_mock, instance_mock, method_mock,
+                            property_mock)
 
 
 class DescribeDocument(object):
@@ -120,6 +119,11 @@ class DescribeDocument(object):
         document, tables_ = tables_fixture
         tables = document.tables
         assert tables is tables_
+    
+    def it_provides_access_to_its_bookmarks(self, bookmarks_fixture):
+        document, Bookmarks_, bookmarks_ = bookmarks_fixture
+        bookmarks = document.bookmarks
+        assert bookmarks is bookmarks_
 
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
@@ -276,6 +280,13 @@ class DescribeDocument(object):
         body_prop_.return_value.tables = tables_
         return document, tables_
 
+    @pytest.fixture
+    def bookmarks_fixture(self, bookmarks_prop,  Bookmarks_, bookmarks_):
+        document_elm = element('w:document')
+        document = Document(document_elm, None)
+        bookmarks_prop.return_value = bookmarks_
+        return document, Bookmarks_, bookmarks_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -362,6 +373,17 @@ class DescribeDocument(object):
     def tables_(self, request):
         return instance_mock(request, list)
 
+    @pytest.fixture
+    def bookmarks_prop(self, request):
+        return property_mock(request, Document, 'bookmarks')
+    
+    @pytest.fixture
+    def Bookmarks_(self, request):
+        return class_mock(request, 'docx.text.bookmarks.Bookmarks')
+    
+    @pytest.fixture
+    def bookmarks_(self, request):
+        return instance_mock(request, Bookmarks)
 
 class Describe_Body(object):
 
