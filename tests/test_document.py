@@ -20,7 +20,7 @@ from docx.shape import InlineShape, InlineShapes
 from docx.shared import Length
 from docx.styles.styles import Styles
 from docx.table import Table
-from docx.text.bookmarks import Bookmarks
+from docx.text.bookmarks import Bookmarks, Bookmark
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
@@ -81,6 +81,12 @@ class DescribeDocument(object):
         document._body.add_table.assert_called_once_with(rows, cols, width)
         assert table == table_
         assert table.style == style
+
+    def it_can_start_a_bookmark(self, start_bookmark_fixture):
+        document, bmrk_ = start_bookmark_fixture
+        bmrk = document.start_bookmark()
+        assert bmrk == bmrk_
+        assert bmrk.name == 'test_bookmark'
 
     def it_can_save_the_document_to_a_file(self, save_fixture):
         document, file_ = save_fixture
@@ -286,6 +292,13 @@ class DescribeDocument(object):
         document = Document(document_elm, None)
         bookmarks_prop.return_value = bookmarks_
         return document, Bookmarks_, bookmarks_
+    
+    @pytest.fixture
+    def start_bookmark_fixture(self, bookmark):
+        document_elm = element('w:document')
+        document = Document(document_elm, None)
+        return document, bookmark
+
 
     # fixture components ---------------------------------------------
 
@@ -384,6 +397,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def bookmarks_(self, request):
         return instance_mock(request, Bookmarks)
+
+    @pytest.fixture
+    def bookmark(self, request):
+        return instance_mock(request, Bookmark)
 
 class Describe_Body(object):
 
