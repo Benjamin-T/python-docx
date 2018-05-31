@@ -9,10 +9,13 @@ from __future__ import (absolute_import, division, print_function,
 
 from collections import Sequence
 
+from docx.oxml.xmlchemy import ZeroOrMore
 from docx.shared import ElementProxy
 
 
 class Bookmarks(Sequence):
+    """Container class for the bookmark elements in the document."""
+
     def __init__(self, document_elm):
         super(Bookmarks, self).__init__()
         self._document = self._element = document_elm
@@ -58,3 +61,43 @@ class Bookmark(ElementProxy):
     def is_closed(self):
         """ If True, the bookmark is closed. """
         return self._element.is_closed
+
+
+class BookmarkParent(object):
+    """
+    The :class:`BookmarkParent` object is used as mixin object for the
+    different parts of the document. It contains the methods which can be used
+    to start and end a Bookmark.
+    """
+    bookmarkStart = ZeroOrMore('w:bookmarkStart', successors=('w:sectPr',))
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd', successors=('w:sectPr',))
+
+    def start_bookmark(self, name):
+        """
+        The :func:`start_bookmark` method is used to place the start of  a
+        bookmark. It requires a name as input.
+
+        :param str name: Bookmark name
+
+        """
+        bookmarkstart = self._element._add_bookmarkStart()
+        bookmarkstart.add_name(name)
+        self._element.append(bookmarkstart)
+        return Bookmark(bookmarkstart)
+
+    def end_bookmark(self, bookmark=None):
+        """
+        The :func:`end_bookmark` method is used to end a bookmark. It takes a
+        :any:`Bookmark<docx.text.bookmarks.Bookmark>` as input.
+
+        :param obj bookmark: Bookmark object that needs an end.
+
+        """
+        bookmarkend = self._element._add_bookmarkEnd()
+        if bookmark is None:
+            raise ValueError('No bookmark object supplied.')
+        else:
+            if bookmark.is_closed:
+                raise ValueError('Cannot end closed bookmark.')
+            bookmarkend.id = bookmark.id
+        return Bookmark(bookmarkend)
