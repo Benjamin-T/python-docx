@@ -63,3 +63,23 @@ class DescribeBookmarks(object):
     @pytest.fixture
     def bookmark_(self, request):
         return instance_mock(request, Bookmark)
+
+
+class DescribeBookmark(object):
+
+    def it_has_a_name(self, bookmark_name_fixture):
+        bookmark, name = bookmark_name_fixture
+        assert isinstance(bookmark, Bookmark)
+        assert bookmark.name == name
+
+    # fixture --------------------------------------------------------
+        
+    @pytest.fixture(params=[
+        ('w:bookmarkStart{w:name=bookmark-name}',  'bookmark-name'),
+    ])
+    def bookmark_name_fixture(self, request):
+        bookmark_cxml, name = request.param
+        bookmark = Bookmark(element(bookmark_cxml))
+        return bookmark, name
+
+    # fixture components ---------------------------------------------
