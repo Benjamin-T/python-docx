@@ -10,12 +10,10 @@ from __future__ import (absolute_import, division, print_function,
 
 import pytest
 
-from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
-from docx.shared import Twips
 from docx.text.bookmarks import Bookmark, Bookmarks
 
 from ..unitutil.cxml import element, xml
-from ..unitutil.mock import call, class_mock, instance_mock
+from ..unitutil.mock import class_mock, instance_mock
 
 
 class DescribeBookmarks(object):
@@ -63,3 +61,23 @@ class DescribeBookmarks(object):
     @pytest.fixture
     def bookmark_(self, request):
         return instance_mock(request, Bookmark)
+
+
+class DescribeBookmark(object):
+
+    def it_has_a_name(self, bookmark_name_fixture):
+        bookmark, name = bookmark_name_fixture
+        assert isinstance(bookmark, Bookmark)
+        assert bookmark.name == name
+
+    # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:bookmarkStart{w:name=bookmark-name}',  'bookmark-name'),
+    ])
+    def bookmark_name_fixture(self, request):
+        bookmark_cxml, name = request.param
+        bookmark = Bookmark(element(bookmark_cxml))
+        return bookmark, name
+
+    # fixture components ---------------------------------------------

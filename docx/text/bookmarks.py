@@ -43,3 +43,8 @@ class Bookmark(ElementProxy):
     def __init__(self, doc_element):
         super(Bookmark, self).__init__(doc_element)
         self._element = doc_element
+
+    @property
+    def name(self):
+        """ Returns the element's name."""
+        return self._element.name
