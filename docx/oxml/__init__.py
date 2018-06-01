@@ -203,3 +203,7 @@ from .text.run import CT_Br, CT_R, CT_Text
 register_element_cls('w:br', CT_Br)
 register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
+
+from .bookmark import CT_Bookmark, CT_MarkupRange
+register_element_cls('w:bookmarkEnd', CT_MarkupRange)
+register_element_cls('w:bookmarkStart', CT_Bookmark)
