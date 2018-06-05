@@ -48,3 +48,8 @@ class Bookmark(ElementProxy):
     def name(self):
         """ Returns the element's name."""
         return self._element.name
+
+    @property
+    def id(self):
+        """ Returns the element's unique identifier."""
+        return self._element.id
