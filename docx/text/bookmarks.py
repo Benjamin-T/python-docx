@@ -53,3 +53,8 @@ class Bookmark(ElementProxy):
     def id(self):
         """ Returns the element's unique identifier."""
         return self._element.id
+
+    @property
+    def is_closed(self):
+        """ If True, the bookmark is closed. """
+        return self._element.is_closed

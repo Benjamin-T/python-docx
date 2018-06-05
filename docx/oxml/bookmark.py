@@ -17,6 +17,22 @@ class CT_Bookmark(BaseOxmlElement):
     name = RequiredAttribute('w:name', ST_String)
 
 
+    @property
+    def is_closed(self):
+        """
+        The `is_closed` property of the :class:`CT_BookmarkRange` object is
+        used to determine whether there is already a bookmarkEnd element in
+        the document containing the same bookmark id. If this is the case, the
+        bookmark is closed if not, the bookmark is open.
+        """
+        root_element = [ancestor for ancestor in self.iterancestors()][-1]
+        matching_bookmarkEnds = root_element.xpath(
+            './/w:bookmarkEnd[@w:id=\'%s\']' % self.id
+        )
+        if not matching_bookmarkEnds:
+            return False
+        return True
+
 class CT_MarkupRange(BaseOxmlElement):
     """The ``<w:bookmarkEnd>`` element."""
     id = RequiredAttribute('w:id', ST_DecimalNumber)
