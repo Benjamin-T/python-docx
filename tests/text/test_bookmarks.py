@@ -72,8 +72,13 @@ class DescribeBookmark(object):
         assert isinstance(bookmark, Bookmark)
         assert bookmark.name == name
 
+    def it_has_an_id(self, bookmark_id_fixture):
+        bookmark, expected_id = bookmark_id_fixture
+        assert isinstance(bookmark, Bookmark)
+        assert bookmark.id == expected_id
+
     # fixture --------------------------------------------------------
-        
+
     @pytest.fixture(params=[
         ('w:bookmarkStart{w:name=bookmark-name}',  'bookmark-name'),
     ])
@@ -81,5 +86,14 @@ class DescribeBookmark(object):
         bookmark_cxml, name = request.param
         bookmark = Bookmark(element(bookmark_cxml))
         return bookmark, name
+
+    @pytest.fixture(params=[
+        ('w:bookmarkStart{w:id=1}',  '1'),
+        ('w:bookmarkEnd{w:id=1}',  '1'),
+    ])
+    def bookmark_id_fixture(self, request):
+        bookmark_cxml, expected_id = request.param
+        bookmark = Bookmark(element(bookmark_cxml))
+        return bookmark, expected_id
 
     # fixture components ---------------------------------------------

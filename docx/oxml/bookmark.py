@@ -18,5 +18,3 @@ class CT_Bookmark(BaseOxmlElement):
 class CT_MarkupRange(BaseOxmlElement):
     """The ``<w:bookmarkEnd>`` element."""
     bmrk_id = RequiredAttribute('w:id', ST_RelationshipId)
-
-
