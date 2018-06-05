@@ -10,10 +10,12 @@ from __future__ import (absolute_import, division, print_function,
 
 import pytest
 
+from docx.oxml.bookmark import CT_Bookmark
+from docx.oxml.text.paragraph import CT_P
 from docx.text.bookmarks import Bookmark, Bookmarks
 
 from ..unitutil.cxml import element, xml
-from ..unitutil.mock import class_mock, instance_mock
+from ..unitutil.mock import class_mock, instance_mock, method_mock
 
 
 class DescribeBookmarks(object):
@@ -75,6 +77,11 @@ class DescribeBookmark(object):
         assert isinstance(bookmark, Bookmark)
         assert bookmark.id == expected_id
 
+    def it_has_an_closed_property(self, bookmark_status_fixture):
+        bookmark, expected_status = bookmark_status_fixture
+        assert isinstance(bookmark, Bookmark)
+        assert bookmark.is_closed == expected_status
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -94,4 +101,19 @@ class DescribeBookmark(object):
         bookmark = Bookmark(element(bookmark_cxml))
         return bookmark, expected_id
 
+    @pytest.fixture(params=[
+        ('w:bookmarkStart{w:id=1}/w:bookmarkEnd{w:id=1}', True),
+        ('w:bookmarkStart{w:id=1}/w:bookmarkEnd{w:id=2}', False),
+        ('w:bookmarkStart{w:id=1}', False),
+    ])
+    def bookmark_status_fixture(self, request, iterancestor_):
+        bookmark_cxml, expected_status = request.param
+        bookmark = Bookmark(element(bookmark_cxml))
+        iterancestor_.return_value = [CT_P(element(bookmark_cxml))]
+        return bookmark, expected_status
+
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def iterancestor_(self, request):
+        return method_mock(request, CT_Bookmark, 'iterancestors')
