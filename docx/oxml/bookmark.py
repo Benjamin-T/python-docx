@@ -16,6 +16,20 @@ class CT_Bookmark(BaseOxmlElement):
     bmrk_id = RequiredAttribute('w:id', ST_RelationshipId)
 
     @property
+    def _next_id(self):
+        """
+        The first ``w:id`` unused by a ``<w:bookmarkStart>`` element, starting at
+        1 and filling any gaps in numbering between existing ``<w:bookmarkStart>``
+        elements.
+        """
+        bmrk_id_strs = self.xpath('.//w:bookmarkStart/@w:id')
+        bmrk_ids = [int(bmrk_id_str) for bmrk_id_str in bmrk_id_strs]
+        for num in range(1, len(bmrk_ids)+2):
+            if num not in bmrk_ids:
+                break
+        return str(num)
+
+    @property
     def is_closed(self):
         """
         The `is_closed` property of the :class:`CT_BookmarkRange` object is

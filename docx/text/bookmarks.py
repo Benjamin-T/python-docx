@@ -58,3 +58,8 @@ class Bookmark(ElementProxy):
     def is_closed(self):
         """ If True, the bookmark is closed. """
         return self._element.is_closed
+
+    @property
+    def _next_id(self):
+        """ If True, the bookmark is closed. """
+        return self._element._next_id

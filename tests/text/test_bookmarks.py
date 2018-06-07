@@ -82,6 +82,11 @@ class DescribeBookmark(object):
         assert isinstance(bookmark, Bookmark)
         assert bookmark.is_closed == expected_status
 
+    def it_can_get_a_new_element_id(self, bookmarks_next_id_fixture):
+        bookmark, expected_id = bookmarks_next_id_fixture
+        assert isinstance(bookmark, Bookmark)
+        assert bookmark._next_id == expected_id
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -111,5 +116,15 @@ class DescribeBookmark(object):
         bookmark_cxml, expected_status = request.param
         bookmark = Bookmark(element(bookmark_cxml))
         return bookmark, expected_status
+
+    @pytest.fixture(params=[
+        ('w:bookmarkStart{w:id=0}', '1'),
+        ('w:bookmarkStart{w:id=2}', '1'),
+        ('w:bookmarkStart{w:id=3}/w:bookmarkStart{w:id=1}', '2'),
+    ])
+    def bookmarks_next_id_fixture(self, request):
+        bookmark_cxml, expected_id = request.param
+        bookmark = Bookmark(element(bookmark_cxml))
+        return bookmark, expected_id
 
     # fixture components ---------------------------------------------
