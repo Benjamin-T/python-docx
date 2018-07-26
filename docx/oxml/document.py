@@ -13,7 +13,8 @@ class CT_Document(BaseOxmlElement):
     ``<w:document>`` element, the root element of a document.xml file.
     """
     body = ZeroOrOne('w:body')
-
+    bookmarkStart = ZeroOrMore('w:bookmarkStart', successors=('w:sectPr',))
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd', successors=('w:sectPr',))
     @property
     def sectPr_lst(self):
         """
@@ -30,6 +31,8 @@ class CT_Body(BaseOxmlElement):
     """
     p = ZeroOrMore('w:p', successors=('w:sectPr',))
     tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
+    bookmarkStart = ZeroOrMore('w:bookmarkStart', successors=('w:sectPr',))
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd', successors=('w:sectPr',))
     sectPr = ZeroOrOne('w:sectPr', successors=())
 
     def add_section_break(self):
