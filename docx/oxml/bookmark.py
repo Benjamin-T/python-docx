@@ -11,7 +11,6 @@ from docx.oxml.simpletypes import (ST_DecimalNumber, ST_RelationshipId,
 from docx.oxml.xmlchemy import (BaseOxmlElement, OptionalAttribute,
                                 RequiredAttribute)
 
-
 class CT_Bookmark(BaseOxmlElement):
     """The ``<w:bookmarkStart>`` element"""
     id = RequiredAttribute('w:id', ST_RelationshipId)
@@ -19,7 +18,12 @@ class CT_Bookmark(BaseOxmlElement):
 
     def add_name(self, name):
         """
+<<<<<<< HEAD
         Add the bookmark name to the `<w:bookmarkStart>` element.
+=======
+        Return a newly added CT_Num (<w:num>) element referencing the
+        abstract numbering definition identified by *abstractNum_id*.
+>>>>>>> 5bfc87a... bmrks: Working version
         """
         self.id = self._next_id
         self.name = name
@@ -31,7 +35,8 @@ class CT_Bookmark(BaseOxmlElement):
         1 and filling any gaps in numbering between existing ``<w:bookmarkStart>``
         elements.
         """
-        bmrk_id_strs = self.xpath('.//w:bookmarkStart/@w:id')
+        root_element = [ancestor for ancestor in self.iterancestors()][-1]
+        bmrk_id_strs = root_element.xpath('.//w:bookmarkStart/@w:id')
         bmrk_ids = [int(bmrk_id_str) for bmrk_id_str in bmrk_id_strs]
         for num in range(1, len(bmrk_ids)+2):
             if num not in bmrk_ids:

@@ -82,3 +82,34 @@ class BookmarkParent(object):
         bookmarkstart.add_name(name)
         self._element.append(bookmarkstart)
         return Bookmark(bookmarkstart)
+
+    @property
+    def _next_id(self):
+        """
+        The first ``w:id`` unused by a ``<w:bookmarkStart>`` element, starting at
+        1 and filling any gaps in numbering between existing ``<w:bookmarkStart>``
+        elements.
+        """
+        bmrk_id_strs = self._element.xpath('.//w:bookmarkStart/@w:id')
+        bmrk_ids = [int(bmrk_id_str) for bmrk_id_str in bmrk_id_strs]
+        for num in range(1, len(bmrk_ids)+2):
+            if num not in bmrk_ids:
+                break
+        return str(num)
+
+    def end_bookmark(self, bookmark=None):
+        """
+        The :func:`end_bookmark` method is used to end a bookmark. It takes a
+        :any:`Bookmark<docx.text.bookmarks.Bookmark>` as optional input.
+
+        """
+        bookmarkend = self._element._add_bookmarkEnd()
+        if bookmark is None:
+            bookmarkend.id = bookmarkend._next_id
+            if bookmarkend.is_closed:
+                raise ValueError('Cannot end closed bookmark.')
+        else:
+            if bookmark.is_closed:
+                raise ValueError('Cannot end closed bookmark.')
+            bookmarkend.id = bookmark.id
+        return Bookmark(bookmarkend)

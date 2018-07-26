@@ -10,10 +10,11 @@ from __future__ import absolute_import, print_function
 
 from .oxml.table import CT_Tbl
 from .shared import Parented
+from docx.text.bookmarks import BookmarkParent
 from .text.paragraph import Paragraph
 
 
-class BlockItemContainer(Parented):
+class BlockItemContainer(Parented, BookmarkParent):
     """
     Base class for proxy objects that can contain block items, such as _Body,
     _Cell, header, footer, footnote, endnote, comment, and text box objects.
