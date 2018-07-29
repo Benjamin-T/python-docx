@@ -201,8 +201,6 @@ register_element_cls('w:br', CT_Br)
 register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
 
-from .bookmark import CT_Bookmark, CT_MarkupRange, CT_id
+from .bookmark import CT_Bookmark, CT_MarkupRange
 register_element_cls('w:bookmarkEnd', CT_MarkupRange)
 register_element_cls('w:bookmarkStart', CT_Bookmark)
-register_element_cls('w:id', CT_id)
-register_element_cls('w:name', CT_String)

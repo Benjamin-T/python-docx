@@ -85,20 +85,6 @@ class BookmarkParent(object):
         bookmarkstart.add_name(name)
         self._element.append(bookmarkstart)
         return Bookmark(bookmarkstart)
-    
-    @property
-    def _next_id(self):
-        """
-        The first ``w:id`` unused by a ``<w:bookmarkStart>`` element, starting at
-        1 and filling any gaps in numbering between existing ``<w:bookmarkStart>``
-        elements.
-        """
-        bmrk_id_strs = self._element.xpath('.//w:bookmarkStart/@w:id')
-        bmrk_ids = [int(bmrk_id_str) for bmrk_id_str in bmrk_id_strs]
-        for num in range(1, len(bmrk_ids)+2):
-            if num not in bmrk_ids:
-                break
-        return str(num)
 
     def end_bookmark(self, bookmark=None):
         """

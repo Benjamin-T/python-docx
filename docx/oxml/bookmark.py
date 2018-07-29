@@ -7,14 +7,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from docx.oxml.simpletypes import ST_RelationshipId, ST_String, ST_DecimalNumber
-from docx.oxml.xmlchemy import BaseOxmlElement, RequiredAttribute, ZeroOrOne, ZeroOrMore, OneAndOnlyOne
-from . import OxmlElement
-from .ns import qn
-from .shared import CT_DecimalNumber, CT_String
-from docx.oxml.document import CT_Body, CT_Document
-
-class CT_id(BaseOxmlElement):
-    id = RequiredAttribute('w:id', ST_RelationshipId) 
+from docx.oxml.xmlchemy import BaseOxmlElement, RequiredAttribute, OptionalAttribute
 
 class CT_Bookmark(BaseOxmlElement):
     """The ``<w:bookmarkStart>`` element"""

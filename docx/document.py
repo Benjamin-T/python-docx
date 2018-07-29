@@ -106,15 +106,16 @@ class Document(ElementProxy):
         which can be ended at any desired location using the end_bookmark 
         method. The latter takes only a bookmark object as input. 
         """
-        return self._body.start_bookmark(name)
+        paragraph = self.add_paragraph()
+        return paragraph.start_bookmark(name)
 
     def end_bookmark(self, bookmark=None):
         """
-        Starts a bookmark at the location. It returns a bookmark object 
-        which can be ended at any desired location using the end_bookmark 
-        method. The latter takes only a bookmark object as input. 
+        Ends a bookmark at the location. It only accepts a bookmark object 
+        as input.
         """
-        return self._body.end_bookmark(bookmark)        
+        paragraph = self.add_paragraph()        
+        return paragraph.end_bookmark(bookmark)        
 
     @property
     def bookmarks(self):
