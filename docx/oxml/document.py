@@ -13,8 +13,6 @@ class CT_Document(BaseOxmlElement):
     ``<w:document>`` element, the root element of a document.xml file.
     """
     body = ZeroOrOne('w:body')
-    bookmarkStart = ZeroOrMore('w:bookmarkStart', successors=('w:sectPr',))
-    bookmarkEnd = ZeroOrMore('w:bookmarkEnd', successors=('w:sectPr',))
     @property
     def sectPr_lst(self):
         """
