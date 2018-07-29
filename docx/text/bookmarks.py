@@ -14,6 +14,8 @@ from docx.shared import ElementProxy
 
 
 class Bookmarks(Sequence):
+    """Container class for the bookmark elements in the document."""
+
     def __init__(self, document_elm):
         super(Bookmarks, self).__init__()
         self._document = self._element = document_elm
@@ -86,14 +88,14 @@ class BookmarkParent(object):
     def end_bookmark(self, bookmark=None):
         """
         The :func:`end_bookmark` method is used to end a bookmark. It takes a
-        :any:`Bookmark<docx.text.bookmarks.Bookmark>` as optional input.
+        :any:`Bookmark<docx.text.bookmarks.Bookmark>` as input.
+
+        :param obj bookmark: Bookmark object that needs an end.
 
         """
         bookmarkend = self._element._add_bookmarkEnd()
         if bookmark is None:
-            bookmarkend.id = bookmarkend._next_id
-            if bookmarkend.is_closed:
-                raise ValueError('Cannot end closed bookmark.')
+            raise ValueError('No bookmark object supplied.')
         else:
             if bookmark.is_closed:
                 raise ValueError('Cannot end closed bookmark.')

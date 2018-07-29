@@ -111,11 +111,11 @@ class Document(ElementProxy):
 
     def end_bookmark(self, bookmark=None):
         """
-        Ends a bookmark at the location. It only accepts a bookmark object 
+        Ends a bookmark at the location. It only accepts a bookmark object
         as input.
         """
-        paragraph = self.add_paragraph()        
-        return paragraph.end_bookmark(bookmark)        
+        paragraph = self.add_paragraph()
+        return paragraph.end_bookmark(bookmark)
 
     @property
     def bookmarks(self):
