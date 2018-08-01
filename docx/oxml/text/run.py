@@ -29,6 +29,8 @@ class CT_R(BaseOxmlElement):
     cr = ZeroOrMore('w:cr')
     tab = ZeroOrMore('w:tab')
     drawing = ZeroOrMore('w:drawing')
+    bookmarkStart = ZeroOrMore('w:bookmarkStart')
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd')
 
     def _insert_rPr(self, rPr):
         self.insert(0, rPr)

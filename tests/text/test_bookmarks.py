@@ -14,6 +14,7 @@ from docx.oxml.bookmark import CT_Bookmark
 from docx.oxml.text.paragraph import CT_P
 from docx.text.bookmarks import Bookmark, Bookmarks
 from docx.text.paragraph import Paragraph
+from docx.text.run import Run
 from docx.document import Document, _Body
 
 from ..unitutil.cxml import element, xml
@@ -167,6 +168,12 @@ class DescribeBookmarkParent(object):
         assert bookmark is bookmark_
         paragraph_.start_bookmark.assert_called_once_with(bmrk_name)
 
+    def it_can_start_a_bookmark_run(self, start_bookmark_fixture_run):
+        run, bmrk_name, expected_name, expected_id = start_bookmark_fixture_run
+        bookmark = run.start_bookmark(name=bmrk_name)
+        assert bookmark.name == expected_name
+        assert bookmark.id == expected_id
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -190,6 +197,18 @@ class DescribeBookmarkParent(object):
         body_prop_.return_value.add_paragraph.return_value = paragraph_
         bookmark_name = 'test_bookmark'
         return document, bookmark_name, bookmark_, paragraph_
+
+    @pytest.fixture(params=[
+        ('w:r', 1),
+        ('w:r/w:bookmarkStart{w:id=2}', 1),
+        ('w:r/w:bookmarkStart{w:id=1}/w:r/w:bookmarkStart{w:id=2}', 3),
+    ])
+    def start_bookmark_fixture_run(self, request):
+        parent, expected_id = request.param
+        paragraph = Run(element(parent), None)
+        bookmark_name = 'test_bookmark'
+        expected_name = 'test_bookmark'
+        return paragraph, bookmark_name, expected_name, expected_id
 
     # fixture components ---------------------------------------------
 
