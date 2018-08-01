@@ -4,9 +4,8 @@
 |Document| and closely related objects
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
@@ -100,6 +99,15 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
+
+    def start_bookmark(self, name=None):
+        """
+        Starts a bookmark at the location. It returns a bookmark object
+        which can be ended at any desired location using the end_bookmark
+        method. The latter takes only a bookmark object as input.
+        """
+        paragraph = self.add_paragraph()
+        return paragraph.start_bookmark(name)
 
     @property
     def bookmarks(self):

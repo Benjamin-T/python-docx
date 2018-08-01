@@ -14,6 +14,7 @@ from docx.oxml.bookmark import CT_Bookmark
 from docx.oxml.text.paragraph import CT_P
 from docx.text.bookmarks import Bookmark, Bookmarks
 from docx.text.paragraph import Paragraph
+from docx.document import Document, _Body
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import class_mock, instance_mock, method_mock, property_mock
@@ -160,6 +161,12 @@ class DescribeBookmarkParent(object):
         assert bookmark.name == expected_name
         assert bookmark.id == expected_id
 
+    def it_can_start_a_bookmark_document(self, start_bookmark_fixture_doc):
+        document, bmrk_name, bookmark_, paragraph_ = start_bookmark_fixture_doc
+        bookmark = document.start_bookmark(name=bmrk_name)
+        assert bookmark is bookmark_
+        paragraph_.start_bookmark.assert_called_once_with(bmrk_name)
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -176,4 +183,32 @@ class DescribeBookmarkParent(object):
 
     # fixture components ---------------------------------------------
 
+    @pytest.fixture
+    def start_bookmark_fixture_doc(self, paragraph_, body_prop_, bookmark_):
+        document = Document(None, None)
+        paragraph_.start_bookmark.return_value = bookmark_
+        body_prop_.return_value.add_paragraph.return_value = paragraph_
+        bookmark_name = 'test_bookmark'
+        return document, bookmark_name, bookmark_, paragraph_
+
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _Body_(self, request, body_):
+        return class_mock(request, 'docx.document._Body', return_value=body_)
+
+    @pytest.fixture
+    def body_(self, request):
+        return instance_mock(request, _Body)
+
+    @pytest.fixture
+    def paragraph_(self, request):
+        return instance_mock(request, Paragraph)
+
+    @pytest.fixture
+    def bookmark_(self, request):
+        return instance_mock(request, Bookmark)
+
+    @pytest.fixture
+    def body_prop_(self, request, body_):
+        return property_mock(request, Document, '_body', return_value=body_)
