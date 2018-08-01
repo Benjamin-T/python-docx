@@ -9,6 +9,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from collections import Sequence
 
+from docx.oxml.xmlchemy import ZeroOrMore
 from docx.shared import ElementProxy
 
 
@@ -58,3 +59,5 @@ class Bookmark(ElementProxy):
     def is_closed(self):
         """ If True, the bookmark is closed. """
         return self._element.is_closed
+
+

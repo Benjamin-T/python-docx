@@ -13,9 +13,10 @@ import pytest
 from docx.oxml.bookmark import CT_Bookmark
 from docx.oxml.text.paragraph import CT_P
 from docx.text.bookmarks import Bookmark, Bookmarks
+from docx.text.paragraph import Paragraph
 
 from ..unitutil.cxml import element, xml
-from ..unitutil.mock import class_mock, instance_mock, method_mock
+from ..unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeBookmarks(object):
@@ -82,6 +83,17 @@ class DescribeBookmark(object):
         assert isinstance(bookmark, Bookmark)
         assert bookmark.is_closed == expected_status
 
+    def it_can_get_a_new_element_id(self, bookmarks_next_id_fixture):
+        bookmark, expected_id = bookmarks_next_id_fixture
+        assert isinstance(bookmark, Bookmark)
+        assert bookmark._element._next_id == expected_id
+
+    def it_can_add_a_name_to_its_element(self, bookmark_add_name_fixture):
+        bookmark, next_id_ = bookmark_add_name_fixture
+        bookmark.add_name('test_name')
+        assert bookmark.id == 1
+        assert bookmark.name == 'test_name'
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -93,8 +105,8 @@ class DescribeBookmark(object):
         return bookmark, name
 
     @pytest.fixture(params=[
-        ('w:bookmarkStart{w:id=1}',  '1'),
-        ('w:bookmarkEnd{w:id=1}',  '1'),
+        ('w:bookmarkStart{w:id=1}',  1),
+        ('w:bookmarkEnd{w:id=1}',  1),
     ])
     def bookmark_id_fixture(self, request):
         bookmark_cxml, expected_id = request.param
@@ -112,8 +124,31 @@ class DescribeBookmark(object):
         iterancestor_.return_value = [CT_P(element(bookmark_cxml))]
         return bookmark, expected_status
 
+    @pytest.fixture(params=[
+        ('w:bookmarkStart{w:id=0}', 1),
+        ('w:bookmarkStart{w:id=2}', 1),
+        ('w:bookmarkStart{w:id=3}/w:bookmarkStart{w:id=1}', 2),
+    ])
+    def bookmarks_next_id_fixture(self, request, iterancestor_):
+        bookmark_cxml, expected_id = request.param
+        bookmark = Bookmark(element(bookmark_cxml))
+        iterancestor_.return_value = [CT_P(element(bookmark_cxml))]
+        return bookmark, expected_id
+
+    @pytest.fixture
+    def bookmark_add_name_fixture(self, request, next_id_):
+        next_id_.return_value = 1
+        bookmark = element('w:bookmarkStart')
+        return bookmark, next_id_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
     def iterancestor_(self, request):
         return method_mock(request, CT_Bookmark, 'iterancestors')
+
+    @pytest.fixture
+    def next_id_(self, request):
+        return property_mock(request, CT_Bookmark, '_next_id')
+
+
