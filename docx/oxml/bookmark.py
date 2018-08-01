@@ -17,6 +17,26 @@ class CT_Bookmark(BaseOxmlElement):
     id = RequiredAttribute('w:id', ST_RelationshipId)
     name = RequiredAttribute('w:name', ST_String)
 
+    def add_name(self, name):
+        """
+        Add the bookmark name to the `<w:bookmarkStart>` element.
+        """
+        self.id = self._next_id
+        self.name = name
+
+    @property
+    def _next_id(self):
+        """
+        The first ``w:id`` unused by a ``<w:bookmarkStart>`` element, starting at
+        1 and filling any gaps in numbering between existing ``<w:bookmarkStart>``
+        elements.
+        """
+        bmrk_id_strs = self.xpath('.//w:bookmarkStart/@w:id')
+        bmrk_ids = [int(bmrk_id_str) for bmrk_id_str in bmrk_id_strs]
+        for num in range(1, len(bmrk_ids)+2):
+            if num not in bmrk_ids:
+                break
+        return str(num)
 
     @property
     def is_closed(self):
@@ -33,6 +53,7 @@ class CT_Bookmark(BaseOxmlElement):
         if not matching_bookmarkEnds:
             return False
         return True
+
 
 class CT_MarkupRange(BaseOxmlElement):
     """The ``<w:bookmarkEnd>`` element."""
