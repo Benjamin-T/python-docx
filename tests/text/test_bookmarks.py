@@ -153,3 +153,24 @@ class DescribeBookmark(object):
         return property_mock(request, CT_Bookmark, '_next_id')
 
 
+class DescribeBookmarkParent(object):
+
+    def it_can_start_a_bookmark(self, start_bookmark_fixture):
+        paragraph, bmrk_name, expected_name = start_bookmark_fixture
+        bookmark = paragraph.start_bookmark(name=bmrk_name)
+        assert bookmark.name == expected_name
+        assert bookmark.id == '1'
+
+    # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:p')
+    ])
+    def start_bookmark_fixture(self, request):
+        parent = request.param
+        paragraph = Paragraph(element(parent), None)
+        bookmark_name = 'test_bookmark'
+        expected_name = 'test_bookmark'
+        return paragraph, bookmark_name, expected_name
+
+    # fixture components ---------------------------------------------
