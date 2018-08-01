@@ -174,6 +174,14 @@ class DescribeBookmarkParent(object):
         assert bookmark.name == expected_name
         assert bookmark.id == expected_id
 
+    def it_can_end_a_bookmark(self, end_bookmark_fixture):
+        paragraph, bookmark_, bmrk_end_id = end_bookmark_fixture
+        bookmark_end = paragraph.end_bookmark(bookmark_)
+        assert bookmark_.name == 'test'
+        assert bookmark_end.id == bmrk_end_id
+        assert isinstance(bookmark_end, Bookmark)
+
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -187,8 +195,6 @@ class DescribeBookmarkParent(object):
         bookmark_name = 'test_bookmark'
         expected_name = 'test_bookmark'
         return paragraph, bookmark_name, expected_name, expected_id
-
-    # fixture components ---------------------------------------------
 
     @pytest.fixture
     def start_bookmark_fixture_doc(self, paragraph_, body_prop_, bookmark_):
@@ -209,6 +215,19 @@ class DescribeBookmarkParent(object):
         bookmark_name = 'test_bookmark'
         expected_name = 'test_bookmark'
         return paragraph, bookmark_name, expected_name, expected_id
+
+    @pytest.fixture(params=[
+        ('w:p/w:bookmarkStart{w:id=1,w:name=test}',
+            'w:bookmarkStart{w:id=1,w:name=test}', 1),
+        ('w:p/w:bookmarkStart{w:id=1}/w:bookmarkStart{w:id=2}',
+             'w:bookmarkStart{w:id=2,w:name=test}', 2),
+    ])
+    def end_bookmark_fixture(self, request, iterancestor_):
+        parent, bmrk_el, bmrk_id = request.param
+        iterancestor_.return_value = [CT_P(element("w:p"))]
+        paragraph = Paragraph(element(parent), None)
+        bookmark = Bookmark(element(bmrk_el))
+        return paragraph, bookmark, bmrk_id
 
     # fixture components ---------------------------------------------
 
@@ -231,3 +250,7 @@ class DescribeBookmarkParent(object):
     @pytest.fixture
     def body_prop_(self, request, body_):
         return property_mock(request, Document, '_body', return_value=body_)
+
+    @pytest.fixture
+    def iterancestor_(self, request):
+        return method_mock(request, CT_Bookmark, 'iterancestors')

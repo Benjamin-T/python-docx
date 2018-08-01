@@ -82,3 +82,20 @@ class BookmarkParent(object):
         bookmarkstart.add_name(name)
         self._element.append(bookmarkstart)
         return Bookmark(bookmarkstart)
+
+    def end_bookmark(self, bookmark=None):
+        """
+        The :func:`end_bookmark` method is used to end a bookmark. It takes a
+        :any:`Bookmark<docx.text.bookmarks.Bookmark>` as input.
+
+        :param obj bookmark: Bookmark object that needs an end.
+
+        """
+        bookmarkend = self._element._add_bookmarkEnd()
+        if bookmark is None:
+            raise ValueError('No bookmark object supplied.')
+        else:
+            if bookmark.is_closed:
+                raise ValueError('Cannot end closed bookmark.')
+            bookmarkend.id = bookmark.id
+        return Bookmark(bookmarkend)
