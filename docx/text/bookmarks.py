@@ -61,3 +61,24 @@ class Bookmark(ElementProxy):
         return self._element.is_closed
 
 
+class BookmarkParent(object):
+    """
+    The :class:`BookmarkParent` object is used as mixin object for the
+    different parts of the document. It contains the methods which can be used
+    to start and end a Bookmark.
+    """
+    bookmarkStart = ZeroOrMore('w:bookmarkStart')
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd')
+
+    def start_bookmark(self, name):
+        """
+        The :func:`start_bookmark` method is used to place the start of  a
+        bookmark. It requires a name as input.
+
+        :param str name: Bookmark name
+
+        """
+        bookmarkstart = self._element._add_bookmarkStart()
+        bookmarkstart.add_name(name)
+        self._element.append(bookmarkstart)
+        return Bookmark(bookmarkstart)
