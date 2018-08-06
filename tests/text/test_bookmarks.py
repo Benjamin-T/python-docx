@@ -181,6 +181,11 @@ class DescribeBookmarkParent(object):
         assert bookmark_end.id == bmrk_end_id
         assert isinstance(bookmark_end, Bookmark)
 
+    def it_can_end_a_bookmark_document(self, end_bookmark_fixture_doc):
+        document, bookmark_, paragraph_ = end_bookmark_fixture_doc
+        bookmark = document.end_bookmark(bookmark=bookmark_)
+        assert bookmark is bookmark_
+        paragraph_.end_bookmark.assert_called_once_with(bookmark_)
 
     # fixture --------------------------------------------------------
 
@@ -228,6 +233,13 @@ class DescribeBookmarkParent(object):
         paragraph = Paragraph(element(parent), None)
         bookmark = Bookmark(element(bmrk_el))
         return paragraph, bookmark, bmrk_id
+
+    @pytest.fixture
+    def end_bookmark_fixture_doc(self, paragraph_, body_prop_, bookmark_):
+        document = Document(None, None)
+        paragraph_.end_bookmark.return_value = bookmark_
+        body_prop_.return_value.add_paragraph.return_value = paragraph_
+        return document, bookmark_, paragraph_
 
     # fixture components ---------------------------------------------
 
