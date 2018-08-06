@@ -187,6 +187,13 @@ class DescribeBookmarkParent(object):
         assert bookmark is bookmark_
         paragraph_.end_bookmark.assert_called_once_with(bookmark_)
 
+    def it_can_end_a_bookmark_run(self, end_bookmark_fixture_run):
+        run, bookmark_, bmrk_end_id = end_bookmark_fixture_run
+        bookmark_end = run.end_bookmark(bookmark=bookmark_)
+        assert bookmark_.name == 'test'
+        assert bookmark_end.id == bmrk_end_id
+        assert isinstance(bookmark_end, Bookmark)
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -240,6 +247,19 @@ class DescribeBookmarkParent(object):
         paragraph_.end_bookmark.return_value = bookmark_
         body_prop_.return_value.add_paragraph.return_value = paragraph_
         return document, bookmark_, paragraph_
+
+    @pytest.fixture(params=[
+        ('w:p/w:bookmarkStart{w:id=1,w:name=test}',
+            'w:bookmarkStart{w:id=1,w:name=test}', 1),
+        ('w:p/w:bookmarkStart{w:id=1}/w:bookmarkStart{w:id=2}',
+             'w:bookmarkStart{w:id=2,w:name=test}', 2),
+    ])
+    def end_bookmark_fixture_run(self, request, iterancestor_):
+        parent, bmrk_el, bmrk_id = request.param
+        iterancestor_.return_value = [CT_P(element("w:p"))]
+        run = Run(element(parent), None)
+        bookmark = Bookmark(element(bmrk_el))
+        return run, bookmark, bmrk_id
 
     # fixture components ---------------------------------------------
 
