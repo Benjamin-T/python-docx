@@ -83,11 +83,11 @@ register_element_cls("w:document", CT_Document)
 
 from docx.oxml.endnotes import CT_Endnotes  # noqa
 
-register_element_cls('w:endnotes', CT_Endnotes)
+register_element_cls("w:endnotes", CT_Endnotes)
 
 from docx.oxml.footnotes import CT_Footnotes  # noqa
 
-register_element_cls('w:footnotes', CT_Footnotes)
+register_element_cls("w:footnotes", CT_Footnotes)
 
 from docx.oxml.numbering import CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr  # noqa
 
@@ -269,8 +269,11 @@ register_element_cls("w:tab", CT_TabStop)
 register_element_cls("w:tabs", CT_TabStops)
 register_element_cls("w:widowControl", CT_OnOff)
 
-from docx.oxml.text.run import CT_Br, CT_R, CT_Text  # noqa
+from docx.oxml.text.run import CT_Br, CT_R, CT_Text, CT_SimpleField, CT_FldChar  # noqa
 
 register_element_cls("w:br", CT_Br)
 register_element_cls("w:r", CT_R)
 register_element_cls("w:t", CT_Text)
+register_element_cls("w:fldSimple", CT_SimpleField)
+register_element_cls("w:fldChar", CT_FldChar)
+
