@@ -184,7 +184,6 @@ class XsdUnsignedLong(BaseIntType):
     def validate(cls, value):
         cls.validate_int_in_range(value, 0, 18446744073709551615)
 
-
 class ST_BrClear(XsdString):
 
     @classmethod
@@ -407,3 +406,15 @@ class ST_VerticalAlignRun(XsdStringEnumeration):
     SUBSCRIPT = 'subscript'
 
     _members = (BASELINE, SUPERSCRIPT, SUBSCRIPT)
+
+
+class ST_FldCharType(XsdString):
+    @classmethod
+    def validate(cls, value):
+        cls.validate_string(value)
+        valid_values = ('begin', 'separate', 'end')
+        if value not in valid_values:
+            raise ValueError(
+                "must be one of %s, got '%s'" % (valid_values, value)
+            )
+

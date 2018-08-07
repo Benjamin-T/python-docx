@@ -39,6 +39,29 @@ class Paragraph(Parented):
             run.style = style
         return run
 
+    def add_simplefield(self, fieldcode):
+        r = self._p.add_r()
+        fld = r._add_fldsimple()
+        fld.set_field(fieldcode)
+        return fld
+
+    def add_complexfield(self, fieldcode):
+        r = self._p.add_r()
+        fld_begin = r._add_fldChar()
+        fld_begin.fldCharType = "begin"
+
+        r = self._p.add_r()
+        fld  = r._add_fldChar()
+        fld.set_field(fieldcode)
+        r = self._p.add_r()
+        fld_sep = r._add_fldChar()
+        fld_sep.fldCharType = "separate"
+
+        r = self._p.add_r()
+        fld_end = r._add_fldChar()
+        fld_end.fldCharType = "end"
+        return fld
+
     @property
     def alignment(self):
         """

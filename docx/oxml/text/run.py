@@ -5,10 +5,37 @@ Custom element classes related to text runs (CT_R).
 """
 
 from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType
-from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
-)
+from ..simpletypes import ST_BrClear, ST_BrType, ST_OnOff, ST_String, ST_FldCharType
+from ..xmlchemy import (BaseOxmlElement, OptionalAttribute, RequiredAttribute,
+                        ZeroOrMore, ZeroOrOne)
+
+
+class CT_SimpleField(BaseOxmlElement):
+    """
+    `<w:fldSimple>` element, indicating a simple field character.
+    """
+    instr = RequiredAttribute("w:instr", ST_String)
+    fldLock = OptionalAttribute('w:fldLock', ST_OnOff)
+    dirty = OptionalAttribute('w:dirty', ST_OnOff)
+
+    def set_field(self, code):
+        self.instr = code
+
+class CT_FldChar(BaseOxmlElement):
+    """
+    `<w:fldChar>` element, indicating a simple field character.
+    """
+    fldCharType = RequiredAttribute("w:fldCharType", ST_FldCharType)
+    instrText = RequiredAttribute("w:instrText", ST_String)
+    fldLock = OptionalAttribute('w:fldLock', ST_OnOff)
+    dirty = OptionalAttribute('w:dirty', ST_OnOff)
+    r = ZeroOrMore('w:r')
+
+    def set_field(self, codes):
+        self.add_r()
+        for code in codes:
+            self.instrText = code
+
 
 
 class CT_Br(BaseOxmlElement):
@@ -29,6 +56,8 @@ class CT_R(BaseOxmlElement):
     cr = ZeroOrMore('w:cr')
     tab = ZeroOrMore('w:tab')
     drawing = ZeroOrMore('w:drawing')
+    fldsimple = ZeroOrMore('w:fldSimple')
+    fldChar = ZeroOrMore('w:fldChar')
 
     def _insert_rPr(self, rPr):
         self.insert(0, rPr)
