@@ -8,6 +8,7 @@ from ..ns import qn
 from ..simpletypes import ST_BrClear, ST_BrType, ST_OnOff, ST_String, ST_FldCharType
 from ..xmlchemy import (BaseOxmlElement, OptionalAttribute, RequiredAttribute,
                         ZeroOrMore, ZeroOrOne)
+from docx.enum.fields import WD_FIELDCODE
 
 
 class CT_SimpleField(BaseOxmlElement):
@@ -18,8 +19,9 @@ class CT_SimpleField(BaseOxmlElement):
     fldLock = OptionalAttribute('w:fldLock', ST_OnOff)
     dirty = OptionalAttribute('w:dirty', ST_OnOff)
 
-    def set_field(self, code):
-        self.instr = code
+    def set_field(self, field_name, properties):
+        if getattr(WD_FIELDCODE, field_name):
+            self.instr = field_name + ' ' + properties
 
 class CT_FldChar(BaseOxmlElement):
     """
@@ -29,13 +31,9 @@ class CT_FldChar(BaseOxmlElement):
     instrText = RequiredAttribute("w:instrText", ST_String)
     fldLock = OptionalAttribute('w:fldLock', ST_OnOff)
     dirty = OptionalAttribute('w:dirty', ST_OnOff)
-    r = ZeroOrMore('w:r')
 
     def set_field(self, codes):
-        self.add_r()
-        for code in codes:
-            self.instrText = code
-
+        self.instrText = code
 
 
 class CT_Br(BaseOxmlElement):

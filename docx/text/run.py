@@ -25,6 +25,11 @@ class Run(Parented):
         super(Run, self).__init__(parent)
         self._r = self._element = self.element = r
 
+    def add_field(self, field_name, properties):
+        fld = self._r.add_fldsimple()
+        fld.set_field(field_name, properties)
+        return fld
+
     def add_break(self, break_type=WD_BREAK.LINE):
         """
         Add a break element of *break_type* to this run. *break_type* can

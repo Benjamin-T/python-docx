@@ -39,10 +39,10 @@ class Paragraph(Parented):
             run.style = style
         return run
 
-    def add_simplefield(self, fieldcode):
+    def add_simplefield(self, field_name, properties):
         r = self._p.add_r()
-        fld = r._add_fldsimple()
-        fld.set_field(fieldcode)
+        run = Run(r, self)
+        fld = run.add_field(field_name, properties)
         return fld
 
     def add_complexfield(self, fieldcode):
