@@ -45,6 +45,17 @@ class DescribeDocumentPart(object):
         document_part.relate_to.assert_called_once_with(image_part_, RT.IMAGE)
         assert (rId, image) == (rId_, image_)
 
+    def it_can_iterate_the_story_parts(self, iter_parts_related_by_):
+        document_part = DocumentPart(None, None, None, None)
+        story_part_types = {RT.HEADER, RT.FOOTER, RT.FOOTNOTES, RT.ENDNOTES,
+                            RT.COMMENTS}
+
+        story_parts = document_part.iter_story_parts()
+
+        iter_parts_related_by_.assert_called_once_with(story_part_types)
+        for story_part in story_parts:
+            assert isinstance(story_part, DocumentPart)
+
     def it_provides_access_to_the_document_settings(self, settings_fixture):
         document_part, settings_ = settings_fixture
         settings = document_part.settings
@@ -299,6 +310,10 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def core_properties_(self, request):
         return instance_mock(request, CoreProperties)
+
+    @pytest.fixture
+    def iter_parts_related_by_(self, request):
+        return method_mock(request, DocumentPart, 'iter_parts_related_by')
 
     @pytest.fixture
     def get_or_add_image_(self, request):
