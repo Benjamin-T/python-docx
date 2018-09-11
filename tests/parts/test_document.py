@@ -24,7 +24,7 @@ from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.text import a_p
 from ..unitutil.file import snippet_text
 from ..unitutil.mock import (
-    instance_mock, class_mock, method_mock, property_mock
+    instance_mock, class_mock, method_mock, Mock, property_mock
 )
 
 
@@ -44,6 +44,21 @@ class DescribeDocumentPart(object):
         image_parts.get_or_add_image_part.assert_called_once_with(path)
         document_part.relate_to.assert_called_once_with(image_part_, RT.IMAGE)
         assert (rId, image) == (rId_, image_)
+
+    def it_can_iterate_the_story_parts(self, iter_parts_related_by_):
+        document_part = DocumentPart(None, None, None, None)
+        header_part_ = Mock(name='HeaderPart')
+        footer_part_ = Mock(name='FooterPart')
+
+        story_part_types = {RT.HEADER, RT.FOOTER, RT.FOOTNOTES, RT.ENDNOTES,
+                            RT.COMMENTS}
+        iter_parts_related_by_.return_value = iter(
+                                                (header_part_, footer_part_))
+
+        story_parts = document_part.iter_story_parts()
+
+        iter_parts_related_by_.assert_called_once_with(story_part_types)
+        assert list(story_parts) == [document_part, header_part_, footer_part_]
 
     def it_provides_access_to_the_document_settings(self, settings_fixture):
         document_part, settings_ = settings_fixture
@@ -299,6 +314,10 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def core_properties_(self, request):
         return instance_mock(request, CoreProperties)
+
+    @pytest.fixture
+    def iter_parts_related_by_(self, request):
+        return method_mock(request, DocumentPart, 'iter_parts_related_by')
 
     @pytest.fixture
     def get_or_add_image_(self, request):
