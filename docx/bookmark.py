@@ -68,4 +68,27 @@ class _PartBookmarkFinder(object):
 
     def _iter_start_end_pairs(self):
         """Generate each (bookmarkStart, bookmarkEnd) in this part."""
+        for idx, bookmarkStart in self._iter_starts():
+            # ---skip open pairs---
+            bookmarkEnd = self._matching_end(bookmarkStart, idx)
+            if bookmarkEnd is None:
+                continue
+            # ---skip duplicate names---
+            if not self._add_to_names_so_far(bookmarkStart.name):
+                continue
+            yield (bookmarkStart, bookmarkEnd)
+
+    def _iter_starts(self):
+        """Generate (idx, bookmarkStart) elements in story.
+
+        The *idx* value indicates the location of the bookmarkStart element
+        among all the bookmarkStart and bookmarkEnd elements in the story.
+        """
+        raise NotImplementedError
+
+    def _matching_end(self, bookmarkStart, idx):
+        raise NotImplementedError
+
+    def _add_to_names_so_far(self, name):
+        """Return True if name was added, False if name already present."""
         raise NotImplementedError
