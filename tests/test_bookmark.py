@@ -6,15 +6,15 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import pytest
-from unittest.mock import ANY
 
 from docx.bookmark import (Bookmarks, _DocumentBookmarkFinder,
                            _PartBookmarkFinder)
 from docx.opc.part import Part
 from docx.parts.document import DocumentPart
 
+from .unitutil.cxml import element
 from .unitutil.mock import (call, class_mock, instance_mock, method_mock,
-                            property_mock, initializer_mock)
+                            property_mock, initializer_mock, loose_mock)
 
 
 class DescribeBookmarks(object):
@@ -110,6 +110,18 @@ class Describe_DocumentBookmarkFinder(object):
 
 
 class Describe_PartBookmarkFinder(object):
+    def it_iterates_start_end_pairs(self, iter_start_end_fixture):
+        expected, part_, _iter_starts_, _matching_end_, \
+           _add_to_names_so_far_, name = iter_start_end_fixture
+
+        _partbookmarkfinder = _PartBookmarkFinder(part_)
+
+        result = list(_partbookmarkfinder._iter_start_end_pairs())[0]
+
+        assert result == expected
+        _iter_starts_.assert_called_once_with()
+        _matching_end_.assert_called_once_with(expected[0], 0)
+        _add_to_names_so_far_.assert_called_once_with(name)
 
     def it_provides_an_iter_start_end_pairs_interface_method(
             self, part_, _init_, _iter_start_end_pairs_):
@@ -120,14 +132,48 @@ class Describe_PartBookmarkFinder(object):
         _iter_start_end_pairs_.assert_called_once_with()
         assert pairs == _iter_start_end_pairs_.return_value
 
+# fixture --------------------------------------------------------
+
+    @pytest.fixture
+    def iter_start_end_fixture(self, request, part_, _add_to_names_so_far_,
+                               _iter_starts_, _matching_end_):
+        name = 'test'
+        start_element_ = loose_mock(request)
+        start_element_.name = name
+
+        end_element_ = element('w:bookmarkEnd')
+
+        _iter_starts_.return_value = [(0, start_element_)]
+        _matching_end_.return_value = end_element_
+        _add_to_names_so_far_.return_value = True
+
+        expected = (start_element_, end_element_)
+
+        return expected, part_, _iter_starts_, _matching_end_,\
+            _add_to_names_so_far_, name
+
+# fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _add_to_names_so_far_(self, request):
+        return method_mock(request, _PartBookmarkFinder, '_add_to_names_so_far')
+
     @pytest.fixture
     def _init_(self, request):
         return initializer_mock(request, _PartBookmarkFinder)
 
     @pytest.fixture
+    def _iter_starts_(self, request):
+        return method_mock(request, _PartBookmarkFinder, '_iter_starts')
+
+    @pytest.fixture
     def _iter_start_end_pairs_(self, request):
         return method_mock(
             request, _PartBookmarkFinder, '_iter_start_end_pairs')
+
+    @pytest.fixture
+    def _matching_end_(self, request):
+        return method_mock(request, _PartBookmarkFinder, '_matching_end')
 
     @pytest.fixture
     def part_(self, request):
