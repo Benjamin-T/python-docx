@@ -8,6 +8,7 @@ from __future__ import (
 
 from itertools import chain
 
+from docx.oxml.ns import qn
 from docx.shared import lazyproperty
 
 
@@ -84,6 +85,12 @@ class _PartBookmarkFinder(object):
         The *idx* value indicates the location of the bookmarkStart element
         among all the bookmarkStart and bookmarkEnd elements in the story.
         """
+        for idx, element in enumerate(self._all_starts_and_ends):
+            if element.tag == qn('w:bookmarkStart'):
+                yield idx, element
+
+    @lazyproperty
+    def _all_starts_and_ends(self):
         raise NotImplementedError
 
     def _matching_end(self, bookmarkStart, idx):
