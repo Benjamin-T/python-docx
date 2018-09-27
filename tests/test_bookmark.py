@@ -127,6 +127,16 @@ class Describe_PartBookmarkFinder(object):
         _matching_end_.assert_called_once_with(expected[0], 0)
         _add_to_names_so_far_.assert_called_once_with(name)
 
+    def it_iterates_bookmark_starts(self, __all_starts_and_ends, part_):
+        exp_element = element('w:bookmarkStart')
+
+        __all_starts_and_ends.return_value = [exp_element]
+        partbookmarkfinder_ = _PartBookmarkFinder(part_)
+
+        idx, element_ = list(partbookmarkfinder_._iter_starts())[0]
+        assert idx == 0
+        assert element_ == exp_element
+
     def it_provides_an_iter_start_end_pairs_interface_method(
             self, part_, _init_, _iter_start_end_pairs_):
 
@@ -157,8 +167,18 @@ class Describe_PartBookmarkFinder(object):
 # fixture components ---------------------------------------------
 
     @pytest.fixture
+    def __all_starts_and_ends(self, request):
+        return property_mock(
+            request, _PartBookmarkFinder, '_all_starts_and_ends')
+
+    @pytest.fixture
     def _add_to_names_so_far_(self, request):
         return method_mock(request, _PartBookmarkFinder, '_add_to_names_so_far')
+
+    @pytest.fixture
+    def _all_starts_and_ends_(self, request):
+        return method_mock(
+            request, _PartBookmarkFinder, '_all_starts_and_ends')
 
     @pytest.fixture
     def _init_(self, request):
