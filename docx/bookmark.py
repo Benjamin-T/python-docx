@@ -105,4 +105,12 @@ class _PartBookmarkFinder(object):
 
     def _add_to_names_so_far(self, name):
         """Return True if name was added, False if name already present."""
+        names_so_far = self._names_so_far
+        if name in names_so_far:
+            return False
+        names_so_far.add(name)
+        return True
+
+    @lazyproperty
+    def _names_so_far(self):
         raise NotImplementedError
