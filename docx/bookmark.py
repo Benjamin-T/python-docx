@@ -33,7 +33,9 @@ class Bookmarks(object):
 
 class _Bookmark(object):
     """Proxy for a (w:bookmarkStart, w:bookmarkEnd) element pair."""
-    raise NotImplementedError
+
+    def __init__(self, bookmark_pair):
+        self._bookmarkStart, self._bookmarkEnd = bookmark_pair
 
 
 class _DocumentBookmarkFinder(object):
