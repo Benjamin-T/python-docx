@@ -19,6 +19,18 @@ from .unitutil.mock import (call, class_mock, instance_mock, method_mock,
                             property_mock, initializer_mock)
 
 
+class Describe_Bookmark(object):
+
+    def it_serves_as_proxy_for_a_bookmark_pair(self):
+        bookmark_start = element('w:bookmarkStart')
+        bookmark_end = element('w:bookmarkEnd')
+
+        proxy = _Bookmark((bookmark_start, bookmark_end))
+
+        assert proxy._bookmarkStart is bookmark_start
+        assert proxy._bookmarkEnd is bookmark_end
+
+
 class DescribeBookmarks(object):
 
     def it_knows_how_many_bookmarks_the_document_contains(
