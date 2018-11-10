@@ -113,4 +113,4 @@ class _PartBookmarkFinder(object):
 
     @lazyproperty
     def _names_so_far(self):
-        raise NotImplementedError
+        return set()
