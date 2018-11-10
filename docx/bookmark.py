@@ -6,13 +6,14 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from collections import Sequence
 from itertools import chain
 
 from docx.oxml.ns import qn
 from docx.shared import lazyproperty
 
 
-class Bookmarks(object):
+class Bookmarks(Sequence):
     """Sequence of |Bookmark| objects."""
 
     def __init__(self, document_part):
@@ -21,6 +22,11 @@ class Bookmarks(object):
     def __getitem__(self, idx):
         bookmark_pair = self._finder.bookmark_pairs[idx]
         return _Bookmark(bookmark_pair)
+
+    def __iter__(self):
+        # ---not strictly required, but improves performance over default
+        # ---implementation that makes repeated calls to __getitem__()
+        return (_Bookmark(pair) for pair in self._finder.bookmark_pairs)
 
     def __len__(self):
         return len(self._finder.bookmark_pairs)

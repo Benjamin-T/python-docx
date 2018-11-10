@@ -33,6 +33,16 @@ class Describe_Bookmark(object):
 
 class DescribeBookmarks(object):
 
+    def it_iterates_bookmark_pairs(self, _finder_prop_, finder_):
+        _finder_prop_.return_value = finder_
+        pairs = [(1, 2), (3, 4), (5, 6)]
+        finder_.bookmark_pairs = tuple(pair for pair in pairs)
+        bookmarks = Bookmarks(None)
+
+        for bookmark, pair in zip(bookmarks, pairs):
+            assert bookmark._bookmarkStart == pair[0]
+            assert bookmark._bookmarkEnd == pair[1]
+
     def it_knows_how_many_bookmarks_the_document_contains(
             self, _finder_prop_, finder_):
         _finder_prop_.return_value = finder_
