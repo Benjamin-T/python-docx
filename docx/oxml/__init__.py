@@ -70,6 +70,9 @@ from docx.oxml.bookmark import CT_Bookmark, CT_MarkupRange
 register_element_cls('w:bookmarkEnd',   CT_MarkupRange)
 register_element_cls('w:bookmarkStart', CT_Bookmark)
 
+from docx.oxml.comments import CT_Comments
+register_element_cls('w:comments', CT_Comments)
+
 from docx.oxml.coreprops import CT_CoreProperties
 register_element_cls('cp:coreProperties', CT_CoreProperties)
 
