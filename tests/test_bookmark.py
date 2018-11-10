@@ -9,13 +9,22 @@ import pytest
 
 from docx.bookmark import (Bookmarks, _DocumentBookmarkFinder,
                            _PartBookmarkFinder)
+
 from docx.opc.part import Part
+from docx.oxml.bookmark import CT_MarkupRange
 from docx.oxml.ns import qn
 from docx.parts.document import DocumentPart
 
 from .unitutil.cxml import element
 from .unitutil.mock import (call, class_mock, instance_mock, method_mock,
                             property_mock, initializer_mock, loose_mock)
+
+
+class DescribeCT_MarkupRange(object):
+    def it_has_an_id(self):
+        markuprange = element('w:bookmarkEnd{w:id=1}')
+        assert isinstance(markuprange, CT_MarkupRange)
+        assert markuprange.id == 1
 
 
 class DescribeBookmarks(object):
