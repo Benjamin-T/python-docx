@@ -4,7 +4,6 @@ Feature: Access a bookmark
   I need sequence operations on Bookmarks
 
 
-  @wip
   Scenario: Bookmarks is a sequence
     Given a Bookmarks object of length 6 as bookmarks
      Then len(bookmarks) == 6
