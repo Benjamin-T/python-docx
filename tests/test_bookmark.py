@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division, print_function,
 import pytest
 
 from docx.bookmark import (Bookmarks, _DocumentBookmarkFinder,
-                           _PartBookmarkFinder)
+                           _PartBookmarkFinder, _Bookmark)
 
 from docx.opc.part import Part
 from docx.oxml.bookmark import CT_MarkupRange, CT_Bookmark
@@ -31,6 +31,16 @@ class DescribeBookmarks(object):
 
         assert count == 42
 
+    def it_provides_access_to_bookmarks_by_idx(
+            self, _Bookmark_init_, _finder_prop_, finder_):
+        _finder_prop_.return_value = finder_
+        finder_.bookmark_pairs = tuple((1+idx, 2+idx) for idx in range(3))
+        bookmarks = Bookmarks(None)
+
+        bookmark = bookmarks[2]
+
+        _Bookmark_init_.assert_called_with((3, 4))
+
     def it_provides_access_to_its_bookmark_finder_to_help(
             self, document_part_, _DocumentBookmarkFinder_, finder_):
         _DocumentBookmarkFinder_.return_value = finder_
@@ -42,6 +52,14 @@ class DescribeBookmarks(object):
         assert finder is finder_
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _Bookmark(self, request):
+        class_mock(request, 'docx.bookmark._Bookmark')
+
+    @pytest.fixture
+    def _Bookmark_init_(self, request):
+        return initializer_mock(request, _Bookmark)
 
     @pytest.fixture
     def _DocumentBookmarkFinder_(self, request):

@@ -18,6 +18,10 @@ class Bookmarks(object):
     def __init__(self, document_part):
         self._document_part = document_part
 
+    def __getitem__(self, idx):
+        bookmark_pair = self._finder.bookmark_pairs[idx]
+        return _Bookmark(bookmark_pair)
+
     def __len__(self):
         return len(self._finder.bookmark_pairs)
 
@@ -25,6 +29,11 @@ class Bookmarks(object):
     def _finder(self):
         """_DocumentBookmarkFinder instance for this document."""
         return _DocumentBookmarkFinder(self._document_part)
+
+
+class _Bookmark(object):
+    """Proxy for a (w:bookmarkStart, w:bookmarkEnd) element pair."""
+    # raise NotImplementedError <<-- Commented because of failed package import
 
 
 class _DocumentBookmarkFinder(object):
