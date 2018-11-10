@@ -219,4 +219,5 @@ register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
 
 from docx.oxml.header import CT_HdrFtr
+register_element_cls('w:hdr', CT_HdrFtr)
 register_element_cls('w:ftr', CT_HdrFtr)
