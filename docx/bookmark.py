@@ -94,7 +94,14 @@ class _PartBookmarkFinder(object):
         return self._part.element.xpath('//w:bookmarkStart|//w:bookmarkEnd')
 
     def _matching_end(self, bookmarkStart, idx):
-        raise NotImplementedError
+        for element in self._all_starts_and_ends[idx + 1:]:
+            # ---skip bookmark starts---
+            if element.tag == qn('w:bookmarkStart'):
+                continue
+            bookmarkEnd = element
+            if bookmarkEnd.id == bookmarkStart.id:
+                return bookmarkEnd
+        return None
 
     def _add_to_names_so_far(self, name):
         """Return True if name was added, False if name already present."""
