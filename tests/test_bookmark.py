@@ -26,6 +26,10 @@ class DescribeCT_Bookmark(object):
         assert isinstance(bookmark, CT_Bookmark)
         assert bookmark.id == 1
 
+    def it_has_a_name(self):
+        bookmark = element('w:bookmarkStart{w:name=test}')
+        assert isinstance(bookmark, CT_Bookmark)
+        assert bookmark.name == 'test'
 
 class DescribeCT_MarkupRange(object):
     def it_has_an_id(self):
