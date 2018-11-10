@@ -66,8 +66,9 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 
 from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String
 
-from docx.oxml.bookmark import CT_MarkupRange
+from docx.oxml.bookmark import CT_Bookmark, CT_MarkupRange
 register_element_cls('w:bookmarkEnd',   CT_MarkupRange)
+register_element_cls('w:bookmarkStart', CT_Bookmark)
 
 from docx.oxml.coreprops import CT_CoreProperties
 register_element_cls('cp:coreProperties', CT_CoreProperties)
