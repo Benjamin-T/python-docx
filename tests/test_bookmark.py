@@ -112,6 +112,21 @@ class Describe_DocumentBookmarkFinder(object):
 
 
 class Describe_PartBookmarkFinder(object):
+    def it_locates_matching_bookmark_ends(
+            self, matching_bookmark_ends_fixture):
+        part_, __all_starts_and_ends, bookmarkStart_, bookmarkEnd_,\
+            = matching_bookmark_ends_fixture
+
+        _partbookmarkfinder = _PartBookmarkFinder(part_)
+        __all_starts_and_ends.return_value = [None, bookmarkEnd_]
+
+        test = _partbookmarkfinder._matching_end(bookmarkStart_, 0)
+
+        assert test is bookmarkEnd_
+        assert test.id == 1
+        assert isinstance(bookmarkStart_, CT_Bookmark)
+        assert isinstance(bookmarkEnd_, CT_MarkupRange)
+
     def it_iterates_start_end_pairs(self, iter_start_end_fixture):
         expected, part_, _iter_starts_, _matching_end_, \
            _add_to_names_so_far_, name = iter_start_end_fixture
@@ -177,6 +192,17 @@ class Describe_PartBookmarkFinder(object):
         element_ = element('%s/w:bookmarkStart/w:bookmarkEnd' % part_element)
         return part(None, None, element_, None)
 
+    @pytest.fixture
+    def matching_bookmark_ends_fixture(self, request, part_,
+                                       __all_starts_and_ends):
+        bookmarkEnd_ = element('w:bookmarkEnd')
+        bookmarkEnd_.id = 1
+
+        bookmarkStart_ = element('w:bookmarkStart')
+        bookmarkStart_.id = 1
+
+        return part_, __all_starts_and_ends, bookmarkStart_, bookmarkEnd_
+
 # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -186,7 +212,8 @@ class Describe_PartBookmarkFinder(object):
 
     @pytest.fixture
     def _add_to_names_so_far_(self, request):
-        return method_mock(request, _PartBookmarkFinder, '_add_to_names_so_far')
+        return method_mock(request,
+                           _PartBookmarkFinder, '_add_to_names_so_far')
 
     @pytest.fixture
     def _all_starts_and_ends_(self, request):
