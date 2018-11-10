@@ -16,6 +16,7 @@ from docx.parts.footer import FooterPart
 from docx.parts.document import DocumentPart
 from docx.parts.endnotes import EndnotesPart
 from docx.parts.footnotes import FootnotesPart
+from docx.parts.header import HeaderPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
@@ -35,12 +36,13 @@ PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
 PartFactory.part_type_for[CT.WML_ENDNOTES] = EndnotesPart
 PartFactory.part_type_for[CT.WML_FOOTER] = FooterPart
 PartFactory.part_type_for[CT.WML_FOOTNOTES] = FootnotesPart
+PartFactory.part_type_for[CT.WML_HEADER] = HeaderPart
 PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 PartFactory.part_type_for[CT.WML_SETTINGS] = SettingsPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
 
 del (
     CT, CommentsPart, CorePropertiesPart, DocumentPart, EndnotesPart,
-    FooterPart, FootnotesPart, NumberingPart, PartFactory, StylesPart,
-    part_class_selector
+    FooterPart, FootnotesPart, HeaderPart, NumberingPart, PartFactory,
+    StylesPart, part_class_selector
 )
