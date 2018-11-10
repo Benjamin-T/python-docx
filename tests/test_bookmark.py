@@ -111,6 +111,7 @@ class Describe_DocumentBookmarkFinder(object):
 
 
 class Describe_PartBookmarkFinder(object):
+
     def it_adds_found_bookmark_names_to_its_collection(
                                     self, _add_to_names_so_far_fixture):
 
@@ -132,6 +133,11 @@ class Describe_PartBookmarkFinder(object):
         test = _partbookmarkfinder._matching_end(bookmarkStart_, 0)
 
         assert test is bookmarkEnd_
+
+    def it_has_a_set_with_names(self, part_):
+        _partbookmarkfinder = _PartBookmarkFinder(part_)
+        names = _partbookmarkfinder._names_so_far
+        assert isinstance(names, set)
 
     def it_iterates_start_end_pairs(self, iter_start_end_fixture):
         expected, part_, _iter_starts_, _matching_end_, \
