@@ -133,6 +133,11 @@ class Describe_PartBookmarkFinder(object):
         assert idx == 0
         assert element_ == exp_element
 
+    def it_finds_all_bookmark_starts_and_ends(self, part_element_):
+        a = _PartBookmarkFinder(part_element_)
+        starts_ends = a._all_starts_and_ends
+        assert len(starts_ends) == 2
+
     def it_provides_an_iter_start_end_pairs_interface_method(
             self, part_, _init_, _iter_start_end_pairs_):
 
@@ -161,6 +166,14 @@ class Describe_PartBookmarkFinder(object):
 
         return expected, part_, _iter_starts_, _matching_end_,\
             _add_to_names_so_far_, name
+
+    @pytest.fixture(params=[
+        ('w:document', DocumentPart),
+    ])
+    def part_element_(self, request):
+        part_element, part = request.param
+        element_ = element('%s/w:bookmarkStart/w:bookmarkEnd' % part_element)
+        return part(None, None, element_, None)
 
 # fixture components ---------------------------------------------
 
