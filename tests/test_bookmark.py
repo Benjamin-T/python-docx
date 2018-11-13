@@ -2,17 +2,19 @@
 
 """Test suite for the docx.bookmark module."""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import pytest
+from unittest.mock import ANY
 
-from docx.bookmark import Bookmarks, _DocumentBookmarkFinder
+from docx.bookmark import (Bookmarks, _DocumentBookmarkFinder,
+                           _PartBookmarkFinder)
 from docx.opc.part import Part
 from docx.parts.document import DocumentPart
 
-from .unitutil.mock import call, class_mock, instance_mock, property_mock
+from .unitutil.mock import (call, class_mock, instance_mock, method_mock,
+                            property_mock, initializer_mock)
 
 
 class DescribeBookmarks(object):
@@ -105,3 +107,28 @@ class Describe_DocumentBookmarkFinder(object):
     @pytest.fixture
     def document_part_(self, request):
         return instance_mock(request, DocumentPart)
+
+
+class Describe_PartBookmarkFinder(object):
+
+    def it_provides_an_iter_start_end_pairs_interface_method(
+            self, part_, _init_, _iter_start_end_pairs_):
+
+        pairs = _PartBookmarkFinder.iter_start_end_pairs(part_)
+
+        _init_.assert_called_once_with(part_)
+        _iter_start_end_pairs_.assert_called_once_with()
+        assert pairs == _iter_start_end_pairs_.return_value
+
+    @pytest.fixture
+    def _init_(self, request):
+        return initializer_mock(request, _PartBookmarkFinder)
+
+    @pytest.fixture
+    def _iter_start_end_pairs_(self, request):
+        return method_mock(
+            request, _PartBookmarkFinder, '_iter_start_end_pairs')
+
+    @pytest.fixture
+    def part_(self, request):
+        return instance_mock(request, Part)
