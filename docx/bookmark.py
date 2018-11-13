@@ -91,7 +91,7 @@ class _PartBookmarkFinder(object):
 
     @lazyproperty
     def _all_starts_and_ends(self):
-        raise NotImplementedError
+        return self._part.element.xpath('//w:bookmarkStart|//w:bookmarkEnd')
 
     def _matching_end(self, bookmarkStart, idx):
         raise NotImplementedError
