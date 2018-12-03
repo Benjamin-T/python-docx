@@ -102,6 +102,26 @@ class Document(ElementProxy):
         table.style = style
         return table
 
+    def end_bookmark(self, bookmark):
+        """
+        The :func:`end_bookmark` method is used to end a bookmark. It takes a
+        :any:`Bookmark<docx.text.bookmarks.Bookmark>` as input.
+
+        :param obj bookmark: Bookmark object that needs an end.
+
+        """
+        return self._body.end_bookmark(bookmark)
+
+    def start_bookmark(self, name):
+        """
+        The :func:`start_bookmark` method is used to place the start of  a
+        bookmark. It requires a name as input.
+
+        :param str name: Bookmark name
+
+        """
+        return self._body.start_bookmark(name=name)
+
     @lazyproperty
     def bookmarks(self):
         """|Bookmarks| object providing access to |Bookmark| objects.

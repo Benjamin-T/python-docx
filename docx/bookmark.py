@@ -11,6 +11,51 @@ from itertools import chain
 
 from docx.oxml.ns import qn
 from docx.shared import lazyproperty
+from docx.oxml.xmlchemy import ZeroOrMore
+from docx.oxml.bookmark import CT_MarkupRange
+
+class BookmarkParent(object):
+    """
+    The :class:`BookmarkParent` object is used as mixin object for the
+    different parts of the document. It contains the methods which can be used
+    to start and end a Bookmark.
+    """
+    bookmarkStart = ZeroOrMore('w:bookmarkStart')
+    bookmarkEnd = ZeroOrMore('w:bookmarkEnd')
+
+    def start_bookmark(self, name):
+        """
+        The :func:`start_bookmark` method is used to place the start of  a
+        bookmark. It requires a name as input.
+
+        :param str name: Bookmark name
+
+        """
+        bookmarks = Bookmarks(self.part)
+        names = [bookmark.name for bookmark in bookmarks]
+
+        if name not in names:
+            bmk_id = bookmarks.next_id
+            bookmarkstart = self._element._add_bookmarkStart()
+            bookmarkstart.name = name
+            bookmarkstart.id = bmk_id
+        else:
+            raise KeyError('Bookmark name already present in document.')
+
+        return _Bookmark((bookmarkstart, None))
+
+    def end_bookmark(self, bookmark):
+        """
+        The :func:`end_bookmark` method is used to end a bookmark. It takes a
+        :any:`Bookmark<docx.text.bookmarks.Bookmark>` as input.
+
+        :param obj bookmark: Bookmark object that needs an end.
+
+        """
+        bookmarkend = self._element._add_bookmarkEnd()
+        bookmarkend.id = bookmark.id
+        bookmark._bookmarkEnd = bookmarkend
+        return bookmark
 
 
 class Bookmarks(Sequence):
@@ -31,10 +76,26 @@ class Bookmarks(Sequence):
     def __len__(self):
         return len(self._finder.bookmark_pairs)
 
+    def get(self, name=None):
+        """Get bookmark based on its bookmark name."""
+        for bookmark in self:
+            if bookmark.name == name:
+                return bookmark
+
+    def get_by_id(self, id=None):
+        """Get bookmark based on its unique id."""
+        for bookmark in self:
+            if bookmark.id == id:
+                return bookmark
+
     @lazyproperty
     def _finder(self):
         """_DocumentBookmarkFinder instance for this document."""
         return _DocumentBookmarkFinder(self._document_part)
+
+    @property
+    def next_id(self):
+        return len(list(self._finder.bookmark_starts)) + 1
 
 
 class _Bookmark(object):
@@ -42,6 +103,25 @@ class _Bookmark(object):
 
     def __init__(self, bookmark_pair):
         self._bookmarkStart, self._bookmarkEnd = bookmark_pair
+
+    @property
+    def id(self):
+        return self._bookmarkStart.id
+
+    @property
+    def name(self):
+        return self._bookmarkStart.name
+
+    @name.setter
+    def name(self, name):
+        self._bookmarkStart.name = name
+
+    @property
+    def bookmark_text(self):
+        xpath = '//w:bookmarkStart[@w:id=%s]/following::w:t[following::w:bookmarkEnd[@w:id=%s]]' % (self.id, self.id)
+        bookmark_xpath = self._bookmarkEnd.xpath(xpath)
+        from docx.text.run import Run
+        return [Run(run, None).text for run in bookmark_xpath if len(bookmark_xpath) > 0]
 
 
 class _DocumentBookmarkFinder(object):
@@ -72,6 +152,15 @@ class _DocumentBookmarkFinder(object):
             ))
         )
 
+    @property
+    def bookmark_starts(self):
+        return list(
+            chain(*(
+                _PartBookmarkFinder.iter_starts(part)
+                for part in self._document_part.iter_story_parts()
+            ))
+        )
+
 
 class _PartBookmarkFinder(object):
     """Provides access to bookmark oxml elements in a story part."""
@@ -83,6 +172,10 @@ class _PartBookmarkFinder(object):
     def iter_start_end_pairs(cls, part):
         """Generate each (bookmarkStart, bookmarkEnd) in *part*."""
         return cls(part)._iter_start_end_pairs()
+
+    @classmethod
+    def iter_starts(cls, part):
+        return cls(part)._iter_starts()
 
     def _iter_start_end_pairs(self):
         """Generate each (bookmarkStart, bookmarkEnd) in this part."""
