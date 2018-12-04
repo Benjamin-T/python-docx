@@ -39,6 +39,12 @@ def then_bookmark_has_name_test(context, idx):
     bookmark = context.bookmarks[int(idx)]
     assert bookmark.name == 'test'
 
+@then('bookmarks.get({name}) returns _Bookmark named {name} and id {id}')
+def then_bookmark_get_returns_bookmark_object(context, name, id):
+    bookmark = context.bookmarks.get(name)
+    assert bookmark.name == name
+    assert bookmark.id == int(id)
+
 @then('bookmarks[{idx}] is a _Bookmark object')
 def then_bookmarks_idx_is_a_Bookmark_object(context, idx):
     item = context.bookmarks[int(idx)]
