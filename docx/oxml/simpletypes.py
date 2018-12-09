@@ -185,6 +185,53 @@ class XsdUnsignedLong(BaseIntType):
         cls.validate_int_in_range(value, 0, 18446744073709551615)
 
 
+class ST_Border(BaseStringEnumerationType):
+    """
+    Valid values for different table border attributes.
+    Being:
+        <w:top val="">
+        <w:left val="">
+        <w:bottom val="">
+        <w:right val="">
+        <w:insideH val="">
+        <w:insideV val="">
+    """
+    NIL = 'nil'
+    NONE = 'none'
+    SINGLE = 'single'
+    THICK = 'thick'
+    DOUBLE = 'double'
+    DOTTED = 'dotted'
+    DASHED = 'dashed'
+    DOTDASH = 'dotDash'
+    DOTDOTDASH = 'dotDotDash'
+    TRIPLE = 'triple'
+    THINTHICKSMALLGAP = 'thinThickSmallGap'
+    THICKTHINSMALLGAP = 'thickThinSmallGap'
+    THINTHICKTHINSMALLGAP = 'thinThickThinSmallGap'
+    THINTHICKMEDIUMGAP = 'thinThickMediumGap'
+    THICKTHINMEDIUMGAP = 'thickThinMediumGap'
+    THINTHICKTHINMEDIUMGAP = 'thinThickThinMediumGap'
+    THINTHICKLARGEGAP = 'thinThickLargeGap'
+    THICKTHINLARGEGAP = 'thickThinLargeGap'
+    THINTHICKTHINLARGEGAP = 'thinThickThinLargeGap'
+    WAVE = 'wave'
+    DOUBLEWAVE = 'doubleWave'
+    DASHSMALLGAP = 'dashSmallGap'
+    DASHDOTSTROKED = 'dashDotStroked'
+    THREEDEMBOSS = 'threeDEmboss'
+    THREEDENGRAVE = 'threeDEngrave'
+    OUTSET = 'outset'
+    INSET = 'inset'
+
+    _members = (NIL, NONE, SINGLE, THICK, DOUBLE, DOTTED, DASHED, DOTDASH,
+                DOTDOTDASH, TRIPLE, THINTHICKSMALLGAP, THICKTHINSMALLGAP,
+                THINTHICKTHINSMALLGAP, THINTHICKMEDIUMGAP, THICKTHINMEDIUMGAP,
+                THINTHICKTHINMEDIUMGAP, THINTHICKLARGEGAP, THICKTHINLARGEGAP,
+                THINTHICKTHINLARGEGAP, WAVE, DOUBLEWAVE, DASHSMALLGAP,
+                DASHDOTSTROKED, THREEDEMBOSS, THREEDENGRAVE, OUTSET, INSET)
+
+
 class ST_BrClear(XsdString):
 
     @classmethod
@@ -234,6 +281,14 @@ class ST_DecimalNumber(XsdInt):
 
 
 class ST_DrawingElementId(XsdUnsignedInt):
+    pass
+
+
+class ST_EighthPointMeasure(XsdUnsignedLong):
+    """
+    The `ST_EighthPointMeasure` imposes the same restriction as the
+    `ST_UnsignedDecimalNumber` and is used in the context of table borders.
+    """
     pass
 
 
@@ -311,6 +366,14 @@ class ST_OnOff(XsdBoolean):
         return str_value in ('1', 'true', 'on')
 
 
+class ST_PointMeasure(XsdUnsignedLong):
+    """
+    The `ST_PointMeasure` imposes the same restriction as the
+    `ST_UnsignedDecimalNumber` and is used in the context of table borders.
+    """
+    pass
+
+
 class ST_PositiveCoordinate(XsdLong):
 
     @classmethod
@@ -367,6 +430,31 @@ class ST_TblWidth(XsdString):
             raise ValueError(
                 "must be one of %s, got '%s'" % (valid_values, value)
             )
+
+
+class ST_ThemeColor(BaseStringEnumerationType):
+    """Enumerates the different themecolor options."""
+    DARK1 = 'dark1'
+    LIGHT1 = 'light1'
+    DARK2 = 'dark2'
+    LIGHT2 = 'light2'
+    ACCENT1 = 'accent1'
+    ACCENT2 = 'accent2'
+    ACCENT3 = 'accent3'
+    ACCENT4 = 'accent4'
+    ACCENT5 = 'accent5'
+    ACCENT6 = 'accent6'
+    HYPERLINK = 'hyperlink'
+    FOLLOWEDHYPERLINK = 'followedHyperlink'
+    NONE = 'none'
+    BACKGROUND1 = 'background1'
+    TEXT1 = 'text1'
+    BACKGROUND2 = 'background2'
+    TEXT2 = 'text2'
+
+    _members = (DARK1, LIGHT1, DARK2, LIGHT2, ACCENT1, ACCENT2, ACCENT3,
+                ACCENT4, ACCENT5, ACCENT6, HYPERLINK, FOLLOWEDHYPERLINK,
+                NONE, BACKGROUND1, TEXT1, BACKGROUND2, TEXT2)
 
 
 class ST_TwipsMeasure(XsdUnsignedLong):
