@@ -6,10 +6,140 @@ The |Table| object and related proxy classes.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from .blkcntnr import BlockItemContainer
-from .enum.style import WD_STYLE_TYPE
-from .oxml.simpletypes import ST_Merge
-from .shared import Inches, lazyproperty, Parented
+from docx.blkcntnr import BlockItemContainer
+from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.simpletypes import ST_Merge
+from docx.shared import ElementProxy, Inches, Parented, lazyproperty, RGBColor
+
+
+class Border(ElementProxy):
+    """
+    Proxy wrapping the different border elements.
+    """
+    def __init__(self, element):
+        super(Border, self).__init__(element, None)
+        self._border = element
+
+    @classmethod
+    def new(cls, element):
+        """Creates a new border element with default settings.
+
+        The default settings for the border are:
+            >>> border.val = 'single'
+            >>> border.color = RGBColor(0, 0, 0)
+            >>> border.size = 1
+        """
+        border = cls(element)
+        border.val = 'single'
+        border.color = RGBColor(0, 0, 0)
+        border.size = 4
+        return border
+
+    @property
+    def color(self):
+        return self._border.color
+
+    @color.setter
+    def color(self, value):
+        self._border.color = value
+
+    @property
+    def frame(self):
+        return self._border.frame
+
+    @frame.setter
+    def frame(self, value):
+        self._border.frame = value
+
+    @property
+    def themeColor(self):
+        return self._border.themeColor
+
+    @themeColor.setter
+    def themeColor(self, value):
+        self._border.themeColor = value
+
+    @property
+    def val(self):
+        return self._border.val
+
+    @val.setter
+    def val(self, value):
+        self._border.val = value
+
+    @property
+    def size(self):
+        return self._border.sz
+
+    @size.setter
+    def size(self, value):
+        self._border.sz = value
+
+    @property
+    def space(self):
+        return self._border.space
+
+    @space.setter
+    def space(self, value):
+        self._border.space = value
+
+    @property
+    def shadow(self):
+        return self._border.shadow
+
+    @shadow.setter
+    def shadow(self, value):
+        self._border.shadow = value
+
+
+class Borders(ElementProxy):
+    def __init__(self, element):
+        super(Borders, self).__init__(element, None)
+        self._tblBorders = self._tcBorders = self._element = element
+
+    def __iter__(self):
+        for border in self._element.getchildren():
+            yield Border(border)
+
+    @property
+    def bottom(self):
+        if self._element.bottom is not None:
+            return Border(self._element.get_or_add_bottom())
+        return Border.new(self._element.get_or_add_bottom())
+
+    @property
+    def borders(self):
+        return [border for border in self]
+
+    @property
+    def insideH(self):
+        if self._element.insideH is not None:
+            return Border(self._element.get_or_add_insideH())
+        return Border.new(self._element.get_or_add_insideH())
+
+    @property
+    def insideV(self):
+        if self._element.insideV is not None:
+            return Border(self._element.get_or_add_insideV())
+        return Border.new(self._element.get_or_add_insideV())
+
+    @property
+    def left(self):
+        if self._element.left is not None:
+            return Border(self._element.get_or_add_left())
+        return Border.new(self._element.get_or_add_left())
+
+    @property
+    def right(self):
+        if self._element.right is not None:
+            return Border(self._element.get_or_add_right())
+        return Border.new(self._element.get_or_add_right())
+
+    @property
+    def top(self):
+        if self._element.top is not None:
+            return Border(self._element.get_or_add_top())
+        return Border.new(self._element.get_or_add_top())
 
 
 class Table(Parented):
@@ -71,6 +201,13 @@ class Table(Parented):
     @autofit.setter
     def autofit(self, value):
         self._tblPr.autofit = value
+
+    @property
+    def borders(self):
+        """
+        """
+        borders = self._tblPr.get_or_add_tblBorders()
+        return Borders(borders)
 
     def cell(self, row_idx, col_idx):
         """
@@ -221,6 +358,13 @@ class _Cell(BlockItemContainer):
         table = super(_Cell, self).add_table(rows, cols, width)
         self.add_paragraph()
         return table
+
+    @property
+    def borders(self):
+        """
+        """
+        borders = self._tc.tcPr.get_or_add_tcBorders()
+        return Borders(borders)
 
     def merge(self, other_cell):
         """
