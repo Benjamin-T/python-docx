@@ -3,7 +3,7 @@
 """|BaseStoryPart| and related objects"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-
+from itertools import chain
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
 from docx.oxml.shape import CT_Inline
@@ -71,6 +71,20 @@ class BaseStoryPart(XmlPart):
         if not used_ids:
             return 1
         return max(used_ids) + 1
+
+    def iter_story_parts(self):
+        """Generate all parts in document that contain a story.
+
+        A story is a sequence of block-level items (paragraphs and tables).
+        Story parts include this main document part, headers, footers,
+        footnotes, and endnotes.
+        """
+        return chain(
+            (self,),
+            self.iter_parts_related_by(
+                {RT.COMMENTS, RT.ENDNOTES, RT.FOOTER, RT.FOOTNOTES, RT.HEADER}
+            )
+        )
 
     @lazyproperty
     def _document_part(self):

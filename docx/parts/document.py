@@ -89,15 +89,6 @@ class DocumentPart(BaseStoryPart):
         """
         return InlineShapes(self._element.body, self)
 
-    def iter_story_parts(self):
-        """Generate all parts in document that contain a story.
-
-        A story is a sequence of block-level items (paragraphs and tables).
-        Story parts include this main document part, headers, footers,
-        footnotes, and endnotes.
-        """
-        raise NotImplementedError
-
     @lazyproperty
     def numbering_part(self):
         """

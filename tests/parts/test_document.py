@@ -84,6 +84,20 @@ class DescribeDocumentPart(object):
         document.save(file_)
         document._package.save.assert_called_once_with(file_)
 
+    def it_can_iterate_the_story_parts(
+        self, iter_parts_related_by_, header_part_, footer_part_
+    ):
+        iter_parts_related_by_.return_value = iter((header_part_, footer_part_))
+        document_part = DocumentPart(None, None, None, None)
+
+        story_parts = document_part.iter_story_parts()
+
+        iter_parts_related_by_.assert_called_once_with(
+            document_part,
+            {RT.HEADER, RT.FOOTER, RT.FOOTNOTES, RT.ENDNOTES, RT.COMMENTS},
+        )
+        assert list(story_parts) == [document_part, header_part_, footer_part_]
+
     def it_provides_access_to_the_document_settings(self, settings_fixture):
         document_part, settings_ = settings_fixture
         settings = document_part.settings
@@ -253,6 +267,10 @@ class DescribeDocumentPart(object):
         return instance_mock(request, FooterPart)
 
     @pytest.fixture
+    def get_or_add_image_(self, request):
+        return method_mock(request, DocumentPart, "get_or_add_image")
+
+    @pytest.fixture
     def HeaderPart_(self, request):
         return class_mock(request, "docx.parts.document.HeaderPart")
 
@@ -263,6 +281,14 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def InlineShapes_(self, request):
         return class_mock(request, "docx.parts.document.InlineShapes")
+
+    @pytest.fixture
+    def iter_parts_related_by_(self, request):
+        return method_mock(request, DocumentPart, "iter_parts_related_by")
+
+    @pytest.fixture
+    def next_id_prop_(self, request):
+        return property_mock(request, DocumentPart, "next_id")
 
     @pytest.fixture
     def NumberingPart_(self, request):
