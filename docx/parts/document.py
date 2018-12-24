@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from itertools import chain
+
 from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.parts.hdrftr import FooterPart, HeaderPart
@@ -96,7 +98,12 @@ class DocumentPart(BaseStoryPart):
         Story parts include this main document part, headers, footers,
         footnotes, and endnotes.
         """
-        raise NotImplementedError
+        return chain(
+            (self,),
+            self.iter_parts_related_by(
+                {RT.COMMENTS, RT.ENDNOTES, RT.FOOTER, RT.FOOTNOTES, RT.HEADER}
+            )
+        )
 
     @lazyproperty
     def numbering_part(self):
