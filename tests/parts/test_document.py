@@ -262,6 +262,7 @@ class DescribeDocumentPart(object):
     def FooterPart_(self, request):
         return class_mock(request, "docx.parts.document.FooterPart")
 
+    @pytest.fixture
     def footer_part_(self, request):
         return instance_mock(request, FooterPart)
 
