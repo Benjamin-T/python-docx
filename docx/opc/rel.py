@@ -10,7 +10,7 @@ from docx.opc.oxml import CT_Relationships
 
 
 class Relationships(dict):
-    """Collection object for |_Relationship| instances, having list semantics."""
+    """Collection object for |_Relationship| instances, having dict semantics."""
 
     def __init__(self, baseURI):
         super(Relationships, self).__init__()
@@ -150,6 +150,7 @@ class _Relationship(object):
 
     @property
     def target_part(self):
+        """|Part| or subclass this relationship links to."""
         if self._is_external:
             raise ValueError(
                 "target_part property on _Relationship is undefined when target mode is\
