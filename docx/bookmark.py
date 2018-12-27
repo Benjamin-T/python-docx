@@ -122,4 +122,4 @@ class _PartBookmarkFinder(object):
     @lazyproperty
     def _names_so_far(self):
         """set composed to track bookmark names encountered in document traversal."""
-        raise NotImplementedError
+        return set()
