@@ -82,6 +82,9 @@ register_element_cls('w:document', CT_Document)
 from docx.oxml.endnotes import CT_Endnotes  # noqa
 register_element_cls('w:endnotes', CT_Endnotes)
 
+from docx.oxml.footnotes import CT_Footnotes  # noqa
+register_element_cls('w:footnotes', CT_Footnotes)
+
 from docx.oxml.numbering import CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr  # noqa
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
 register_element_cls('w:ilvl',          CT_DecimalNumber)
