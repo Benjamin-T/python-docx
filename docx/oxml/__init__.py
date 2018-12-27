@@ -68,6 +68,9 @@ from .shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)
 register_element_cls("w:titlePg", CT_OnOff)
 
+from docx.oxml.bookmark import CT_Bookmark, CT_MarkupRange  # noqa
+register_element_cls('w:bookmarkEnd', CT_MarkupRange)
+register_element_cls('w:bookmarkStart', CT_Bookmark)
 
 from .coreprops import CT_CoreProperties  # noqa
 register_element_cls('cp:coreProperties', CT_CoreProperties)
