@@ -97,6 +97,9 @@ Specimen xml
       </w:tblPr>
     </w:tbl>
 
+Enumeration:
+
+https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.wordprocessing.bordervalues?view=openxml-2.8.1
 
 
 Schema Definitions
