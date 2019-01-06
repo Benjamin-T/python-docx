@@ -36,6 +36,13 @@ class DescribeBookmark(object):
 
         assert bookmark.name == "bmk-0"
 
+    def it_has_an_id_property(self):
+        bookmarkStart = element("w:bookmarkStart{w:id=0}")
+        bookmarkEnd = element("w:bookmarkEnd")
+
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        assert bookmark.id == 0
 
 class DescribeBookmarks(object):
 
