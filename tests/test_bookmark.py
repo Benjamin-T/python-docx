@@ -26,6 +26,16 @@ from .unitutil.mock import (
     property_mock,
 )
 
+class DescribeBookmark(object):
+
+    def it_has_name_property(self):
+        bookmarkStart = element("w:bookmarkStart{w:name=bmk-0}")
+        bookmarkEnd = element("w:bookmarkEnd")
+
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        assert bookmark.name == "bmk-0"
+
 
 class DescribeBookmarks(object):
 
