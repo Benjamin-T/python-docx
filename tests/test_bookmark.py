@@ -27,6 +27,16 @@ from .unitutil.mock import (
 )
 
 
+class DescribeBookmark(object):
+    def it_has_name_property(self):
+        bookmarkStart = element("w:bookmarkStart{w:name=bmk-0}")
+        bookmarkEnd = element("w:bookmarkEnd")
+
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        assert bookmark.name == "bmk-0"
+
+
 class DescribeBookmarks(object):
     def it_provides_access_to_bookmarks_by_index(
         self, _finder_prop_, finder_, _Bookmark_, bookmark_
