@@ -43,6 +43,17 @@ class DescribeBookmarks(object):
         _Bookmark_.assert_called_once_with((bookmarkStarts[1], bookmarkEnds[1]))
         assert bookmark == bookmark_
 
+    def it_provides_access_to_bookmarks_by_name(self, bookmark_by_name_fixture):
+        bookmarks, names = bookmark_by_name_fixture
+
+        for name in names:
+            bmrk = bookmarks.get(name=name)
+            assert bmrk.name == name
+
+        with pytest.raises(Exception) as exc:
+            bookmarks.get(name="foo-bar")
+            assert exc == KeyError("Requested bookmark not found.")
+
     def it_provides_access_to_bookmarks_by_slice(
         self, _finder_prop_, finder_, _Bookmark_, bookmark_
     ):
@@ -100,6 +111,21 @@ class DescribeBookmarks(object):
         _DocumentBookmarkFinder_.assert_called_once_with(document_part_)
         assert finder is finder_
 
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def bookmark_by_name_fixture(self, request, bookmarks__iter__):
+        bookmarks = Bookmarks(None)
+        names = ["test-0", "test-1", "test-12"]
+
+        bookmark_lst = [instance_mock(request, _Bookmark) for _ in range(3)]
+        for bmrk, name in zip(bookmark_lst, names):
+            bmrk.name = name
+
+        bookmarks__iter__.return_value = iter(bookmark_lst)
+
+        return bookmarks, names
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -109,6 +135,10 @@ class DescribeBookmarks(object):
     @pytest.fixture
     def bookmark_(self, request):
         return instance_mock(request, _Bookmark)
+
+    @pytest.fixture
+    def bookmarks__iter__(self, request):
+        return method_mock(request, Bookmarks, "__iter__")
 
     @pytest.fixture
     def _DocumentBookmarkFinder_(self, request):
