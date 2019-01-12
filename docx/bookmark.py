@@ -122,7 +122,14 @@ class _DocumentBookmarkFinder(object):
 
     @property
     def bookmark_starts(self):
-        raise NotImplementedError
+        return list(
+            chain(
+                *(
+                    _PartBookmarkFinder.iter_starts(part)
+                    for part in self._document_part.iter_story_parts()
+                )
+            )
+        )
 
     @property
     def next_id(self):
@@ -139,6 +146,10 @@ class _PartBookmarkFinder(object):
     def iter_start_end_pairs(cls, part):
         """Generate each (bookmarkStart, bookmarkEnd) in *part*."""
         return cls(part)._iter_start_end_pairs()
+
+    @classmethod
+    def iter_starts(cls, part):
+        raise NotImplementedError
 
     def _iter_start_end_pairs(self):
         """Generate each (bookmarkStart, bookmarkEnd) in this part."""
