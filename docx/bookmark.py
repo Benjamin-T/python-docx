@@ -149,7 +149,7 @@ class _PartBookmarkFinder(object):
 
     @classmethod
     def iter_starts(cls, part):
-        raise NotImplementedError
+        return cls(part)._iter_starts()
 
     def _iter_start_end_pairs(self):
         """Generate each (bookmarkStart, bookmarkEnd) in this part."""
