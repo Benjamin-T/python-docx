@@ -222,6 +222,18 @@ class Describe_DocumentBookmarkFinder(object):
 
         assert names == ["bmk-1", "bmk-2"]
 
+    def it_finds_all_the_bookmark_starts_in_the_document(
+        self, starts_fixture, _PartBookmarkFinder_
+    ):
+        document_part_, calls, expected_value = starts_fixture
+        document_bookmark_finder = _DocumentBookmarkFinder(document_part_)
+
+        bookmark_starts = document_bookmark_finder.bookmark_starts
+
+        document_part_.iter_story_parts.assert_called_once_with()
+        assert _PartBookmarkFinder_.iter_starts.call_args_list == calls
+        assert bookmark_starts == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(
@@ -245,6 +257,30 @@ class Describe_DocumentBookmarkFinder(object):
 
         document_part_.iter_story_parts.return_value = (p for p in mock_parts)
         _PartBookmarkFinder_.iter_start_end_pairs.side_effect = parts_pairs
+
+        return document_part_, calls, expected_value
+
+    @pytest.fixture(
+        params=[
+            ([[(1, 2)]], [(1, 2)]),
+            ([[(1, 2), (3, 4), (5, 6)]], [(1, 2), (3, 4), (5, 6)]),
+            ([[(1, 2)], [(3, 4)], [(5, 6)]], [(1, 2), (3, 4), (5, 6)]),
+            (
+                [[(1, 2), (3, 4)], [(5, 6), (7, 8)], [(9, 10)]],
+                [(1, 2), (3, 4), (5, 6), (7, 8), (9, 10)],
+            ),
+        ]
+    )
+    def starts_fixture(self, request, document_part_, _PartBookmarkFinder_):
+        parts_pairs, expected_value = request.param
+        mock_parts = [
+            instance_mock(request, Part, name="Part-%d" % idx)
+            for idx, part_pairs in enumerate(parts_pairs)
+        ]
+        calls = [call(part_) for part_ in mock_parts]
+
+        document_part_.iter_story_parts.return_value = (p for p in mock_parts)
+        _PartBookmarkFinder_.iter_starts.side_effect = parts_pairs
 
         return document_part_, calls, expected_value
 
