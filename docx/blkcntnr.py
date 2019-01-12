@@ -8,6 +8,7 @@ specialized ones like structured document tags.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from docx.bookmark import _Bookmark, _DocumentBookmarkFinder
 from docx.oxml.table import CT_Tbl
 from docx.shared import Parented
 from docx.text.paragraph import Paragraph
@@ -64,7 +65,15 @@ class BlockItemContainer(Parented):
 
         The returned bookmark is anchored at the end of this block-item container.
         """
-        raise NotImplementedError
+        finder = _DocumentBookmarkFinder(self.part)
+        if name not in finder.bookmark_names:
+            bmk_id = finder.next_id
+            bookmarkstart = self._element._add_bookmarkStart()
+            bookmarkstart.name = name
+            bookmarkstart.id = bmk_id
+        else:
+            raise KeyError("Bookmark name already present in document.")
+        return _Bookmark((bookmarkstart, None))
 
     @property
     def tables(self):
