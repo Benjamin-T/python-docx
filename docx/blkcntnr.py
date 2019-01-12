@@ -75,6 +75,10 @@ class BlockItemContainer(Parented):
             raise KeyError("Bookmark name already present in document.")
         return _Bookmark((bookmarkstart, None))
 
+    def end_bookmark(self, bookmark):
+        """Closes supplied bookmark at current element."""
+        raise NotImplementedError
+
     @property
     def tables(self):
         """
