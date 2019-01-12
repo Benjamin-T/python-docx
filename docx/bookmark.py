@@ -11,6 +11,18 @@ from docx.oxml.ns import qn
 from docx.shared import lazyproperty
 
 
+class BookmarkParent(object):
+    """
+    The :class:`BookmarkParent` object is used as mixin object for the
+    different parts of the document. It contains the methods which can be used
+    to start and end a Bookmark.
+    """
+
+    def start_bookmark(self, name):
+        """Starts bookmark at current element."""
+        raise NotImplementedError
+
+
 class Bookmarks(Sequence):
     """Sequence of |Bookmark| objects.
 

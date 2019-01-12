@@ -11,9 +11,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from docx.oxml.table import CT_Tbl
 from docx.shared import Parented
 from docx.text.paragraph import Paragraph
+from docx.bookmark import BookmarkParent
 
 
-class BlockItemContainer(Parented):
+class BlockItemContainer(Parented, BookmarkParent):
     """Base class for proxy objects that can contain block items.
 
     These containers include _Body, _Cell, header, footer, footnote, endnote, comment,
@@ -65,7 +66,7 @@ class BlockItemContainer(Parented):
         A list containing the tables in this container, in document order.
         Read-only.
         """
-        from .table import Table
+        from docx.table import Table
 
         return [Table(tbl, self) for tbl in self._element.tbl_lst]
 

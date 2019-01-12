@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
-from docx.bookmark import Bookmarks
+from docx.bookmark import Bookmarks, BookmarkParent, _Bookmark
 from docx.document import _Body, Document
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
@@ -43,6 +43,16 @@ class DescribeDocument(object):
             document.add_heading(level=-1)
         with pytest.raises(ValueError):
             document.add_heading(level=10)
+
+    def it_can_add_a_bookmark_to_its_body(self, start_bookmark_, _Bookmark):
+
+        document = Document(element('w:document/w:body'), None)
+        start_bookmark_.return_value = _Bookmark
+
+        bookmark = document.start_bookmark('test')
+
+        assert bookmark is _Bookmark
+        start_bookmark_.assert_called_once_with(document._body, 'test')
 
     def it_can_add_a_page_break(self, add_paragraph_, paragraph_, run_):
         add_paragraph_.return_value = paragraph_
@@ -231,6 +241,10 @@ class DescribeDocument(object):
         return document, body_elm, _Body_, body_
 
     @pytest.fixture
+    def _Bookmark(self, request):
+        return instance_mock(request, _Bookmark)
+
+    @pytest.fixture
     def core_props_fixture(self, document_part_, core_properties_):
         document = Document(None, document_part_)
         document_part_.core_properties = core_properties_
@@ -264,6 +278,10 @@ class DescribeDocument(object):
         document = Document(None, document_part_)
         document_part_.settings = settings_
         return document, settings_
+
+    @pytest.fixture
+    def start_bookmark_(self, request):
+        return method_mock(request, BookmarkParent, 'start_bookmark')
 
     @pytest.fixture
     def styles_fixture(self, document_part_, styles_):

@@ -94,6 +94,16 @@ class Document(ElementProxy):
         table.style = style
         return table
 
+    def start_bookmark(self, name):
+        """
+        The :func:`start_bookmark` method is used to place the start of  a
+        bookmark. It requires a name as input.
+
+        :param str name: Bookmark name
+
+        """
+        return self._body.start_bookmark(name=name)
+
     @lazyproperty
     def bookmarks(self):
         """|Bookmarks| object providing access to |Bookmark| objects.
