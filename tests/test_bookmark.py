@@ -8,6 +8,7 @@ import pytest
 
 from docx.bookmark import (
     _Bookmark,
+    BookmarkParent,
     Bookmarks,
     _DocumentBookmarkFinder,
     _PartBookmarkFinder,
@@ -15,7 +16,7 @@ from docx.bookmark import (
 from docx.opc.part import Part, XmlPart
 from docx.parts.document import DocumentPart
 
-from .unitutil.cxml import element
+from .unitutil.cxml import element, xml
 from .unitutil.mock import (
     ANY,
     call,
@@ -43,6 +44,76 @@ class DescribeBookmark(object):
         bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
 
         assert bookmark.id == 0
+
+
+class DescribeBookmarkParent(object):
+    def it_can_add_a_bookmark_to_different_elements(self, start_bookmark_fixture):
+        DocumentPart_, next_id_, element_, expected_xml = start_bookmark_fixture
+
+        parent = BookmarkParent()
+        parent.part = DocumentPart_
+        parent._element = element_
+        bookmark = parent.start_bookmark("bmk-1")
+
+        assert parent._element.xml == expected_xml
+        assert bookmark.name == "bmk-1"
+        assert bookmark.id == 0
+        assert bookmark._bookmarkEnd is None
+        next_id_.assert_called_once_with()
+
+    def it_raises_a_key_error_if_bookmark_name_already_in_document(
+        self, DocumentPart_, next_id_, bookmark_names_
+    ):
+        parent = BookmarkParent()
+        parent.part = DocumentPart_
+        next_id_.return_value = 1
+        parent._element = element("w:body")
+        bookmark_names_.return_value = ["bmk-0", "bmk-2"]
+
+        with pytest.raises(KeyError) as exc:
+            parent.start_bookmark("bmk-0")
+        assert "Bookmark name already present in document." in str(exc.value)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            ("w:p", "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+            ("w:body", "w:body/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+            ("w:ftr", "w:ftr/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+            ("w:hdr", "w:hdr/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+        ]
+    )
+    def start_bookmark_fixture(self, request, DocumentPart_, next_id_, bookmark_names_):
+        cxml, expected_cxml = request.param
+        expected_xml = xml(expected_cxml)
+        element_ = element(cxml)
+        next_id_.return_value = 0
+        bookmark_names_.return_value = ["bmk-0", "bmk-2"]
+
+        return DocumentPart_, next_id_, element_, expected_xml
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def Bookmarks_(self, request):
+        return instance_mock(request, Bookmarks)
+
+    @pytest.fixture
+    def DocumentPart_(self, request):
+        return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def _DocumentBookmarkFinder_(self, request):
+        return instance_mock(request, _DocumentBookmarkFinder)
+
+    @pytest.fixture
+    def bookmark_names_(self, request):
+        return property_mock(request, _DocumentBookmarkFinder, "bookmark_names")
+
+    @pytest.fixture
+    def next_id_(self, request):
+        return property_mock(request, _DocumentBookmarkFinder, "next_id")
 
 
 class DescribeBookmarks(object):

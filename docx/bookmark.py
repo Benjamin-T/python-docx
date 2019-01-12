@@ -20,7 +20,16 @@ class BookmarkParent(object):
 
     def start_bookmark(self, name):
         """Starts bookmark at current element."""
-        raise NotImplementedError
+        finder = _DocumentBookmarkFinder(self.part)
+        if name not in finder.bookmark_names:
+            bmk_id = finder.next_id
+            bookmarkstart = self._element._add_bookmarkStart()
+            bookmarkstart.name = name
+            bookmarkstart.id = bmk_id
+        else:
+            raise KeyError("Bookmark name already present in document.")
+
+        return _Bookmark((bookmarkstart, None))
 
 
 class Bookmarks(Sequence):
@@ -84,6 +93,10 @@ class _DocumentBookmarkFinder(object):
         self._document_part = document_part
 
     @property
+    def bookmark_names(self):
+        raise NotImplementedError
+
+    @property
     def bookmark_pairs(self):
         """List of (bookmarkStart, bookmarkEnd) element pairs for document.
 
@@ -106,6 +119,10 @@ class _DocumentBookmarkFinder(object):
                 )
             )
         )
+
+    @property
+    def next_id(self):
+        raise NotImplementedError
 
 
 class _PartBookmarkFinder(object):
