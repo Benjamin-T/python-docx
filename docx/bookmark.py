@@ -31,6 +31,10 @@ class BookmarkParent(object):
 
         return _Bookmark((bookmarkstart, None))
 
+    def end_bookmark(self, bookmark):
+        """Closes supplied bookmark at current element."""
+        raise NotImplementedError
+
 
 class Bookmarks(Sequence):
     """Sequence of |Bookmark| objects.

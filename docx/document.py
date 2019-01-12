@@ -103,7 +103,7 @@ class Document(ElementProxy):
         :param obj bookmark: Bookmark object that needs an end.
 
         """
-        raise NotImplementedError
+        return self._body.end_bookmark(bookmark)
 
     def start_bookmark(self, name):
         """
