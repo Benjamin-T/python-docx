@@ -61,6 +61,22 @@ class DescribeBookmarkParent(object):
         assert bookmark._bookmarkEnd is None
         next_id_.assert_called_once_with()
 
+    def it_can_close_an_open_bookmark(self, end_bookmark_fixture):
+        element_, expected_xml = end_bookmark_fixture
+        parent = BookmarkParent()
+
+        parent._element = element_
+
+        bookmarkStart = parent._element.xpath(".//w:bookmarkStart")[0]
+        bmk = _Bookmark((bookmarkStart, None))
+
+        bookmark = parent.end_bookmark(bmk)
+
+        assert bookmark.id == 0
+        assert bookmark.name == "bmk-1"
+        assert bookmark._bookmarkEnd.id == 0
+        assert parent._element.xml == expected_xml
+
     def it_raises_a_key_error_if_bookmark_name_already_in_document(
         self, DocumentPart_, next_id_, bookmark_names_
     ):
@@ -75,6 +91,32 @@ class DescribeBookmarkParent(object):
         assert "Bookmark name already present in document." in str(exc.value)
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            (
+                "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0})",
+                "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:body/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:body/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:ftr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:ftr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:hdr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:hdr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+        ]
+    )
+    def end_bookmark_fixture(self, request):
+        cxml, expected_cxml = request.param
+        parent = element(cxml)
+        expected_xml = xml(expected_cxml)
+        return parent, expected_xml
 
     @pytest.fixture(
         params=[

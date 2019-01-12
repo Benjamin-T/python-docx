@@ -3,7 +3,7 @@ Feature: Modifying bookmarks in various story parts
   As a developer using python-docx
   I need bookmark start and end functionality in different story-elements
 
-  @wip
+
   Scenario Outline: Add bookmark to different story elements
     Given a <element>
      When I start a bookmark named test in <element> as bookmark
