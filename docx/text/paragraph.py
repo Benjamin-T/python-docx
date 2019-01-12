@@ -8,10 +8,10 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from ..enum.style import WD_STYLE_TYPE
-from .parfmt import ParagraphFormat
-from .run import Run
-from ..shared import Parented
+from docx.enum.style import WD_STYLE_TYPE
+from docx.text.parfmt import ParagraphFormat
+from docx.text.run import Run
+from docx.shared import Parented
 
 
 class Paragraph(Parented):

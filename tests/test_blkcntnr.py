@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import pytest
 
 from docx.blkcntnr import BlockItemContainer
-from docx.bookmark import Bookmarks, _DocumentBookmarkFinder
+from docx.bookmark import Bookmarks, _DocumentBookmarkFinder, _Bookmark
 from docx.shared import Inches
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -39,23 +39,20 @@ class DescribeBlockItemContainer(object):
             blkcntnr.start_bookmark("bmk-0")
         assert "Bookmark name already present in document." in str(exc.value)
 
-    # fixtures -------------------------------------------------------
+    def it_can_close_an_open_bookmark(self, end_bookmark_fixture):
+        element_, expected_xml = end_bookmark_fixture
 
-    @pytest.fixture(
-        params=[
-            ("w:p", "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
-            ("w:body", "w:body/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
-            ("w:ftr", "w:ftr/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
-            ("w:hdr", "w:hdr/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
-        ]
-    )
-    def start_bookmark_fixture(self, request, next_id_, bookmark_names_, part):
-        cxml, expected_cxml = request.param
-        expected_xml = xml(expected_cxml)
-        element_ = element(cxml)
-        next_id_.return_value = 0
-        bookmark_names_.return_value = ["bmk-0", "bmk-2"]
-        return next_id_, element_, expected_xml
+        blkcntnr = BlockItemContainer(element_, None)
+
+        bookmarkStart = blkcntnr._element.xpath(".//w:bookmarkStart")[0]
+        bmk = _Bookmark((bookmarkStart, None))
+
+        bookmark = blkcntnr.end_bookmark(bmk)
+
+        assert bookmark.id == 0
+        assert bookmark.name == "bmk-1"
+        assert bookmark._bookmarkEnd.id == 0
+        assert blkcntnr._element.xml == expected_xml
 
     def it_can_add_a_paragraph(self, add_paragraph_fixture, _add_paragraph_):
         text, style, paragraph_, add_run_calls = add_paragraph_fixture
@@ -132,6 +129,32 @@ class DescribeBlockItemContainer(object):
 
     @pytest.fixture(
         params=[
+            (
+                "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0})",
+                "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:body/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:body/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:ftr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:ftr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:hdr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:hdr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+        ]
+    )
+    def end_bookmark_fixture(self, request):
+        cxml, expected_cxml = request.param
+        parent = element(cxml)
+        expected_xml = xml(expected_cxml)
+        return parent, expected_xml
+
+    @pytest.fixture(
+        params=[
             ("w:body", 0),
             ("w:body/w:p", 1),
             ("w:body/(w:p,w:p)", 2),
@@ -143,6 +166,22 @@ class DescribeBlockItemContainer(object):
         blkcntnr_cxml, expected_count = request.param
         blkcntnr = BlockItemContainer(element(blkcntnr_cxml), None)
         return blkcntnr, expected_count
+
+    @pytest.fixture(
+        params=[
+            ("w:p", "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+            ("w:body", "w:body/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+            ("w:ftr", "w:ftr/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+            ("w:hdr", "w:hdr/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+        ]
+    )
+    def start_bookmark_fixture(self, request, next_id_, bookmark_names_, part):
+        cxml, expected_cxml = request.param
+        expected_xml = xml(expected_cxml)
+        element_ = element(cxml)
+        next_id_.return_value = 0
+        bookmark_names_.return_value = ["bmk-0", "bmk-2"]
+        return next_id_, element_, expected_xml
 
     @pytest.fixture(
         params=[
