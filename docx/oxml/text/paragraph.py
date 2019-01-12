@@ -12,8 +12,10 @@ class CT_P(BaseOxmlElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
-    pPr = ZeroOrOne('w:pPr')
-    r = ZeroOrMore('w:r')
+
+    bookmarkStart = ZeroOrMore("w:bookmarkStart")
+    pPr = ZeroOrOne("w:pPr")
+    r = ZeroOrMore("w:r")
 
     def _insert_pPr(self, pPr):
         self.insert(0, pPr)

@@ -72,6 +72,10 @@ class _DocumentBookmarkFinder(object):
         self._document_part = document_part
 
     @property
+    def bookmark_names(self):
+        raise NotImplementedError
+
+    @property
     def bookmark_pairs(self):
         """List of (bookmarkStart, bookmarkEnd) element pairs for document.
 
@@ -94,6 +98,10 @@ class _DocumentBookmarkFinder(object):
                 )
             )
         )
+
+    @property
+    def next_id(self):
+        raise NotImplementedError
 
 
 class _PartBookmarkFinder(object):

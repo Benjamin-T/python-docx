@@ -15,7 +15,7 @@ from docx.bookmark import (
 from docx.opc.part import Part, XmlPart
 from docx.parts.document import DocumentPart
 
-from .unitutil.cxml import element
+from .unitutil.cxml import element, xml
 from .unitutil.mock import (
     ANY,
     call,
@@ -25,6 +25,24 @@ from .unitutil.mock import (
     method_mock,
     property_mock,
 )
+
+
+class DescribeBookmark(object):
+    def it_has_name_property(self):
+        bookmarkStart = element("w:bookmarkStart{w:name=bmk-0}")
+        bookmarkEnd = element("w:bookmarkEnd")
+
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        assert bookmark.name == "bmk-0"
+
+    def it_has_an_id_property(self):
+        bookmarkStart = element("w:bookmarkStart{w:id=0}")
+        bookmarkEnd = element("w:bookmarkEnd")
+
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        assert bookmark.id == 0
 
 
 class DescribeBookmarks(object):
