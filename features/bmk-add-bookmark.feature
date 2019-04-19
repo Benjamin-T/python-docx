@@ -18,7 +18,6 @@ Feature: Modifying bookmarks in various story parts
     | header    |
     | footer    |
 
-  @wip
   Scenario Outline: Removing bookmarks from document
     Given a Bookmarks object of length 5 as bookmarks
      When I remove bookmark <name> by <identifier>

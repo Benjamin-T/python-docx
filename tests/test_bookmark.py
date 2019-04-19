@@ -46,7 +46,21 @@ class DescribeBookmark(object):
 
 
 class DescribeBookmarks(object):
-    """Unit-test suite for `docx.bookmark.Bookmarks` object."""
+    def it_can_delete_a_bookmark_by_index(self, del_by_index_fixture):
+        bookmarks, parent, bookmarks__getitem__, expected_xml = del_by_index_fixture
+
+        del bookmarks[0]
+
+        assert parent.xml == expected_xml
+        bookmarks__getitem__.assert_called_once_with(bookmarks, 0)
+
+    def it_can_delete_a_bookmark_by_name(self, del_by_name_fixture):
+        bookmarks, parent, get_, expected_xml = del_by_name_fixture
+
+        del bookmarks["bmk-1"]
+
+        assert parent.xml == expected_xml
+        get_.assert_called_once_with(bookmarks, "bmk-1")
 
     def it_provides_access_to_bookmarks_by_index(
         self, _finder_prop_, finder_, _Bookmark_, bookmark_
@@ -141,6 +155,69 @@ class DescribeBookmarks(object):
         _DocumentBookmarkFinder_.assert_called_once_with(document_part_)
         assert finder is finder_
 
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def bookmark_by_name_fixture(self, request, bookmarks__iter__):
+        bookmarks = Bookmarks(None)
+        names = ["test-0", "test-1", "test-12"]
+
+        bookmark_lst = [instance_mock(request, _Bookmark) for _ in range(3)]
+        for bmrk, name in zip(bookmark_lst, names):
+            bmrk.name = name
+
+        bookmarks__iter__.return_value = iter(bookmark_lst)
+
+        return bookmarks, names
+
+    @pytest.fixture(
+        params=[
+            ("w:p/(w:bookmarkStart,w:bookmarkEnd)", "w:p"),
+            ("w:body/(w:p/(w:bookmarkStart), w:p/(w:bookmarkEnd))", "w:body/(w:p,w:p)"),
+            (
+                "w:body/(w:p/(w:bookmarkStart, w:bookmarkStart), w:p/(w:bookmarkEnd))",
+                "w:body/(w:p/(w:bookmarkStart), w:p)",
+            ),
+        ]
+    )
+    def del_by_index_fixture(self, request, bookmarks__getitem__):
+        cxml, expected_cxml = request.param
+        parent = element(cxml)
+        expected_xml = xml(expected_cxml)
+
+        bookmarkStart = parent.xpath(".//w:bookmarkStart")[0]
+        bookmarkEnd = parent.xpath(".//w:bookmarkEnd")[0]
+        bookmark_ = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        bookmarks = Bookmarks(None)
+        bookmarks__getitem__.return_value = bookmark_
+
+        return bookmarks, parent, bookmarks__getitem__, expected_xml
+
+    @pytest.fixture(
+        params=[
+            ("w:p/(w:bookmarkStart,w:bookmarkEnd)", "w:p"),
+            ("w:body/(w:p/(w:bookmarkStart), w:p/(w:bookmarkEnd))", "w:body/(w:p,w:p)"),
+            (
+                "w:body/(w:p/(w:bookmarkStart, w:bookmarkStart), w:p/(w:bookmarkEnd))",
+                "w:body/(w:p/(w:bookmarkStart), w:p)",
+            ),
+        ]
+    )
+    def del_by_name_fixture(self, request, get_):
+        cxml, expected_cxml = request.param
+        parent = element(cxml)
+        expected_xml = xml(expected_cxml)
+
+        bookmarkStart = parent.xpath(".//w:bookmarkStart")[0]
+        bookmarkEnd = parent.xpath(".//w:bookmarkEnd")[0]
+        bookmark_ = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        bookmarks = Bookmarks(None)
+        get_.return_value = bookmark_
+
+        return bookmarks, parent, get_, expected_xml
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -154,6 +231,14 @@ class DescribeBookmarks(object):
     @pytest.fixture
     def bookmark_2_(self, request):
         return instance_mock(request, _Bookmark)
+
+    @pytest.fixture
+    def bookmarks__getitem__(self, request):
+        return method_mock(request, Bookmarks, "__getitem__")
+
+    @pytest.fixture
+    def bookmarks__iter__(self, request):
+        return method_mock(request, Bookmarks, "__iter__")
 
     @pytest.fixture
     def _DocumentBookmarkFinder_(self, request):
@@ -170,6 +255,10 @@ class DescribeBookmarks(object):
     @pytest.fixture
     def _finder_prop_(self, request):
         return property_mock(request, Bookmarks, "_finder")
+
+    @pytest.fixture
+    def get_(self, request):
+        return method_mock(request, Bookmarks, "get")
 
     @pytest.fixture
     def _iter_(self, request):
