@@ -56,6 +56,18 @@ class Bookmarks(Sequence):
             return [_Bookmark(pair) for pair in bookmark_pairs[idx]]
         return _Bookmark(bookmark_pairs[idx])
 
+    def __delitem__(self, value):
+        """Provides support for deleting bookmarks by index or name."""
+        if isinstance(value, int):
+            bookmark = self[value]
+        else:
+            bookmark = self.get(value)
+
+        parent = bookmark._bookmarkEnd.getparent()
+        parent.remove(bookmark._bookmarkEnd)
+        parent = bookmark._bookmarkStart.getparent()
+        parent.remove(bookmark._bookmarkStart)
+
     def __iter__(self):
         """Supports iteration."""
         return (_Bookmark(pair) for pair in self._finder.bookmark_pairs)
