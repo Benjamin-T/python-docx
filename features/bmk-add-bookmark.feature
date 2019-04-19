@@ -29,14 +29,12 @@ Feature: Modifying bookmarks in various story parts
     | bookmark_body  | name       |
     | 0              | index      |
 
-  @wip
   Scenario: Check if bookmark is empty
     Given a paragraph
      When I start a bookmark named test in paragraph as bookmark
       And I terminate bookmark in paragraph
      Then bookmark.empty == True
 
-  @wip
   Scenario: Check if bookmark is not empty
     Given a paragraph
      When I start a bookmark named test in paragraph as bookmark

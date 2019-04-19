@@ -44,6 +44,29 @@ class DescribeBookmark(object):
 
         assert bookmark.id == 0
 
+    def it_knows_its_empty(self, empty_fixture):
+        bookmarkStart, bookmarkEnd, expected = empty_fixture
+
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        assert bookmark.empty == expected
+
+    @pytest.fixture(
+        params=[
+            ("w:p/(w:bookmarkStart,w:bookmarkEnd)", True),
+            ("w:p/(w:bookmarkStart,w:r,w:bookmarkEnd)", False),
+            ("w:p/(w:bookmarkStart)", False),
+        ]
+    )
+    def empty_fixture(self, request):
+        cxml, expected = request.param
+        paragraph = element(cxml)
+        bookmarkStart = paragraph.getchildren()[0]
+        bookmarkEnd = paragraph.getchildren()[-1]
+        if bookmarkStart == bookmarkEnd:
+            bookmarkEnd = None
+        return bookmarkStart, bookmarkEnd, expected
+
 
 class DescribeBookmarks(object):
     def it_can_delete_a_bookmark_by_index(self, del_by_index_fixture):
