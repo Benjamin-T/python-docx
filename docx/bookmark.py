@@ -95,6 +95,13 @@ class _Bookmark(object):
         self._bookmarkStart, self._bookmarkEnd = bookmark_pair
 
     @property
+    def empty(self):
+        """Returns True if bookmark doesnt contain text."""
+        if self._bookmarkStart is not None and self._bookmarkEnd is not None:
+            return self._bookmarkEnd.getprevious() == self._bookmarkStart
+        return False
+
+    @property
     def id(self):
         """Provides access to the bookmark id."""
         return self._bookmarkStart.id
