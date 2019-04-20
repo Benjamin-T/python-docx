@@ -17,3 +17,30 @@ Feature: Modifying bookmarks in various story parts
     | paragraph |
     | header    |
     | footer    |
+
+  @wip
+  Scenario Outline: Removing bookmarks from document
+    Given a Bookmarks object of length 5 as bookmarks
+     When I remove bookmark <name> by <identifier>
+     Then len(bookmarks) == 4
+      And no bookmark named bookmark_body is found in document
+
+  Examples: Removing bookmark by name or index
+    | name           | identifier |
+    | bookmark_body  | name       |
+    | 0              | index      |
+
+  @wip
+  Scenario: Check if bookmark is empty
+    Given a paragraph
+     When I start a bookmark named test in paragraph as bookmark
+      And I terminate bookmark in paragraph
+     Then bookmark.empty == True
+
+  @wip
+  Scenario: Check if bookmark is not empty
+    Given a paragraph
+     When I start a bookmark named test in paragraph as bookmark
+      And I set the paragraph text
+      And I terminate bookmark in paragraph
+     Then bookmark.empty == False
