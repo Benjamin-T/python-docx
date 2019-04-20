@@ -28,6 +28,18 @@ def then_bookmark_id_is_an_int(context):
     bookmark = context.bookmark
     assert isinstance(bookmark.id, int)
 
+@when("I remove bookmark {name} by {identifier}")
+def when_I_remove_a_bookmark_named_bookmark_body(context, name, identifier):
+    if identifier == 'index':
+        name = int(name)
+    del context.bookmarks[name]
+
+@when("I get bookmarks[{idx}] as bookmark")
+def when_I_get_bookmarks_3_as_bookmark(context, idx):
+    context.bookmark = context.bookmarks[int(idx)]
+
+
+# then =====================================================
 
 @then('bookmark.name == "Target"')
 def then_bookmark_name_eq_Target(context):
@@ -62,3 +74,18 @@ def then_len_bookmarks_eq_count(context, count):
     expected = int(count)
     actual = len(context.bookmarks)
     assert actual == expected, "len(bookmarks) == %s" % actual
+
+
+@then("no bookmark named {name} is found in document")
+def then_no_bookmark_named_bookmark_body_is_found_in_document(context, name):
+    context.exception = None
+    try:
+        context.bookmarks.get(name=name)
+    except KeyError as exception:
+        context.exception = exception
+    assert context.exception.args == ("Requested bookmark not found.",)
+
+
+@then("bookmark.empty == {bool_val}")
+def bookmarks_empty_is_true(context, bool_val):
+    assert context.bookmark.empty == eval(bool_val)
