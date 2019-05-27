@@ -209,6 +209,19 @@ class Describe_DocumentBookmarkFinder(object):
         assert _PartBookmarkFinder_.iter_start_end_pairs.call_args_list == calls
         assert bookmark_pairs == expected_value
 
+    def it_provides_access_to_the_bookmark_names(self, bookmark_starts_):
+        document_bookmark_finder = _DocumentBookmarkFinder(None)
+
+        bmk_starts = (
+            (0, _Bookmark((element("w:bookmarkStart{w:name=bmk-1}"), None))),
+            (1, _Bookmark((element("w:bookmarkStart{w:name=bmk-2}"), None))),
+        )
+        bookmark_starts_.return_value = bmk_starts
+
+        names = document_bookmark_finder.bookmark_names
+
+        assert names == ["bmk-1", "bmk-2"]
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(
@@ -236,6 +249,10 @@ class Describe_DocumentBookmarkFinder(object):
         return document_part_, calls, expected_value
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def bookmark_starts_(self, request):
+        return property_mock(request, _DocumentBookmarkFinder, "bookmark_starts")
 
     @pytest.fixture
     def _PartBookmarkFinder_(self, request):
