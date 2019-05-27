@@ -3,7 +3,7 @@ Feature: Document properties and methods
   As a developer using python-docx
   I need properties and methods on the Document object
 
-  @wip
+
   Scenario: Document.start_bookmark()
     Given a Document object as document
      When I assign bookmark = document.start_bookmark("Target")

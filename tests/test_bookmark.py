@@ -216,7 +216,28 @@ class Describe_DocumentBookmarkFinder(object):
         assert _PartBookmarkFinder_.iter_starts.call_args_list == calls
         assert bookmark_starts == expected_value
 
+    def it_provides_the_lowest_available_id_to_help(self, next_id_fixture):
+        bookmark_starts_, expected_id = next_id_fixture
+        bookmarks = _DocumentBookmarkFinder(None)
+
+        next_id = bookmarks.next_id
+
+        bookmark_starts_.assert_called_once_with()
+        assert next_id == expected_id
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[(0, 1, 2), (0, 3, 1), (0, 42, 1)])
+    def next_id_fixture(self, request, bookmark_starts_):
+        id_1, id_2, expected_id = request.param
+
+        bmk_starts = (
+            (0, _Bookmark((element("w:bookmarkStart{w:id=%d}" % id_1), None))),
+            (1, _Bookmark((element("w:bookmarkStart{w:id=%d}" % id_2), None))),
+        )
+
+        bookmark_starts_.return_value = bmk_starts
+        return bookmark_starts_, expected_id
 
     @pytest.fixture(
         params=[
