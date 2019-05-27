@@ -112,7 +112,10 @@ class _DocumentBookmarkFinder(object):
 
     @property
     def next_id(self):
-        raise NotImplementedError
+        """Return lowest available id."""
+        ids = set([bmk.id for idx, bmk in self.bookmark_starts])
+        id_range = set(range(len(ids) + 1))
+        return min(list(id_range - ids))
 
 
 class _PartBookmarkFinder(object):
