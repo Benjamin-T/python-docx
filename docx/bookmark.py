@@ -94,7 +94,7 @@ class _DocumentBookmarkFinder(object):
 
     @property
     def bookmark_names(self):
-        raise NotImplementedError
+        return [start.name for idx, start in self.bookmark_starts]
 
     @property
     def bookmark_pairs(self):
@@ -119,6 +119,10 @@ class _DocumentBookmarkFinder(object):
                 )
             )
         )
+
+    @property
+    def bookmark_starts(self):
+        raise NotImplementedError
 
     @property
     def next_id(self):
