@@ -6,14 +6,17 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
+from docx.blkcntnr import BlockItemContainer
 from docx.bookmark import (
     _Bookmark,
     Bookmarks,
+    _Bookmark,
     _DocumentBookmarkFinder,
     _PartBookmarkFinder,
 )
 from docx.opc.part import Part, XmlPart
 from docx.parts.document import DocumentPart
+from docx.text.paragraph import Paragraph
 
 from .unitutil.cxml import element, xml
 from .unitutil.mock import (
