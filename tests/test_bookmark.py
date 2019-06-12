@@ -6,15 +6,17 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
+from docx.blkcntnr import BlockItemContainer
 from docx.bookmark import (
-    _Bookmark,
     BookmarkParent,
     Bookmarks,
+    _Bookmark,
     _DocumentBookmarkFinder,
     _PartBookmarkFinder,
 )
 from docx.opc.part import Part, XmlPart
 from docx.parts.document import DocumentPart
+from docx.text.paragraph import Paragraph
 
 from .unitutil.cxml import element, xml
 from .unitutil.mock import (
@@ -71,11 +73,8 @@ class DescribeBookmark(object):
 
 class DescribeBookmarkParent(object):
     def it_can_add_a_bookmark_to_different_elements(self, start_bookmark_fixture):
-        DocumentPart_, next_id_, element_, expected_xml = start_bookmark_fixture
+        parent, next_id_, expected_xml = start_bookmark_fixture
 
-        parent = BookmarkParent()
-        parent.part = DocumentPart_
-        parent._element = element_
         bookmark = parent.start_bookmark("bmk-1")
 
         assert parent._element.xml == expected_xml
@@ -143,20 +142,25 @@ class DescribeBookmarkParent(object):
 
     @pytest.fixture(
         params=[
-            ("w:p", "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
-            ("w:body", "w:body/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
-            ("w:ftr", "w:ftr/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
-            ("w:hdr", "w:hdr/(w:bookmarkStart{w:name=bmk-1, w:id=0})"),
+            ("w:p", "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0})", Paragraph),
+            (
+                "w:body",
+                "w:body/(w:bookmarkStart{w:name=bmk-1, w:id=0})",
+                BlockItemContainer,
+            ),
         ]
     )
     def start_bookmark_fixture(self, request, DocumentPart_, next_id_, bookmark_names_):
-        cxml, expected_cxml = request.param
+        cxml, expected_cxml, parent = request.param
         expected_xml = xml(expected_cxml)
         element_ = element(cxml)
+
+        parent = parent(element_, DocumentPart_)
         next_id_.return_value = 0
+
         bookmark_names_.return_value = ["bmk-0", "bmk-2"]
 
-        return DocumentPart_, next_id_, element_, expected_xml
+        return parent, next_id_, expected_xml
 
     # fixture components ---------------------------------------------
 
