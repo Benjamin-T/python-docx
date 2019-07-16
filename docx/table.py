@@ -10,7 +10,7 @@ from docx.blkcntnr import BlockItemContainer
 from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.simpletypes import ST_Merge
 from docx.shared import ElementProxy, Inches, Parented, lazyproperty, RGBColor
-
+from docx.oxml.exceptions import InvalidXmlError
 
 class Border(ElementProxy):
     """
@@ -25,14 +25,32 @@ class Border(ElementProxy):
         """Creates a new border element with default settings.
 
         The default settings for the border are:
-            >>> border.val = 'single'
-            >>> border.color = RGBColor(0, 0, 0)
-            >>> border.size = 1
+            >>> border.val
+            >>> 'single'
+            >>> border.color
+            >>> RGBColor(0, 0, 0)
+            >>> border
+            >>> 4
         """
+        # border = cls(element.new())
+
+        # defaults = [('val',   'single'),
+        #             ("color", RGBColor(0, 0, 0)),
+        #             ("size",  4)]
+
+        # for attr, value in defaults:
+        #     print(attr, value)
+        #     try:
+        #         hasattr(border._border, attr)
+        #     except InvalidXmlError:
+        #         setattr(border._border, attr, value)
+        # return cls(element.new())
         border = cls(element)
-        border.val = 'single'
-        border.color = RGBColor(0, 0, 0)
-        border.size = 4
+        try:
+            hasattr(border._border, 'val')
+        except InvalidXmlError:
+            setattr(border._border, 'val', 'single')
+
         return border
 
     @property
@@ -101,44 +119,32 @@ class Borders(ElementProxy):
         for border in self._element.getchildren():
             yield Border(border)
 
-    @property
+    @lazyproperty
     def bottom(self):
-        if self._element.bottom is not None:
-            return Border(self._element.get_or_add_bottom())
         return Border.new(self._element.get_or_add_bottom())
 
-    @property
+    @lazyproperty
     def borders(self):
         return [border for border in self]
 
-    @property
+    @lazyproperty
     def insideH(self):
-        if self._element.insideH is not None:
-            return Border(self._element.get_or_add_insideH())
         return Border.new(self._element.get_or_add_insideH())
 
-    @property
+    @lazyproperty
     def insideV(self):
-        if self._element.insideV is not None:
-            return Border(self._element.get_or_add_insideV())
         return Border.new(self._element.get_or_add_insideV())
 
-    @property
+    @lazyproperty
     def left(self):
-        if self._element.left is not None:
-            return Border(self._element.get_or_add_left())
         return Border.new(self._element.get_or_add_left())
 
-    @property
+    @lazyproperty
     def right(self):
-        if self._element.right is not None:
-            return Border(self._element.get_or_add_right())
         return Border.new(self._element.get_or_add_right())
 
-    @property
+    @lazyproperty
     def top(self):
-        if self._element.top is not None:
-            return Border(self._element.get_or_add_top())
         return Border.new(self._element.get_or_add_top())
 
 
@@ -202,7 +208,7 @@ class Table(Parented):
     def autofit(self, value):
         self._tblPr.autofit = value
 
-    @property
+    @lazyproperty
     def borders(self):
         """
         """
@@ -359,7 +365,7 @@ class _Cell(BlockItemContainer):
         self.add_paragraph()
         return table
 
-    @property
+    @lazyproperty
     def borders(self):
         """
         """

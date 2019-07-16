@@ -18,7 +18,7 @@ from docx.oxml.simpletypes import (ST_Border, ST_EighthPointMeasure,
 from docx.oxml.xmlchemy import (BaseOxmlElement, OneAndOnlyOne, OneOrMore,
                                 OptionalAttribute, RequiredAttribute,
                                 ZeroOrMore, ZeroOrOne)
-from docx.shared import Emu, Twips
+from docx.shared import Emu, Twips, RGBColor
 
 
 class CT_Border(BaseOxmlElement):
@@ -32,6 +32,16 @@ class CT_Border(BaseOxmlElement):
     sz = OptionalAttribute('w:sz', ST_EighthPointMeasure)
     space = OptionalAttribute('w:space', ST_PointMeasure)
     shadow = OptionalAttribute('w:shadow', ST_OnOff)
+
+    @classmethod
+    def new(cls):
+        border = cls()
+    #     border.val = 'single'
+    #     border.sz = 4
+    #     border.color = RGBColor(0, 0, 0)
+
+        return border
+
 
 
 class CT_TblBorders(BaseOxmlElement):
