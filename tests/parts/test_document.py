@@ -91,20 +91,6 @@ class DescribeDocumentPart(object):
         InlineShapes_.assert_called_once_with(body_elm, document)
         assert inline_shapes is InlineShapes_.return_value
 
-    def it_can_iterate_the_story_parts(
-        self, iter_parts_related_by_, header_part_, footer_part_
-    ):
-        iter_parts_related_by_.return_value = iter((header_part_, footer_part_))
-        document_part = DocumentPart(None, None, None, None)
-
-        story_parts = document_part.iter_story_parts()
-
-        iter_parts_related_by_.assert_called_once_with(
-            document_part,
-            {RT.COMMENTS, RT.ENDNOTES, RT.FOOTER, RT.FOOTNOTES, RT.HEADER},
-        )
-        assert list(story_parts) == [document_part, header_part_, footer_part_]
-
     def it_can_save_the_package_to_a_file(self, save_fixture):
         document, file_ = save_fixture
         document.save(file_)
@@ -281,10 +267,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def InlineShapes_(self, request):
         return class_mock(request, "docx.parts.document.InlineShapes")
-
-    @pytest.fixture
-    def iter_parts_related_by_(self, request):
-        return method_mock(request, DocumentPart, "iter_parts_related_by")
 
     @pytest.fixture
     def NumberingPart_(self, request):
