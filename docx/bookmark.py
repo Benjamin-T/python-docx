@@ -10,6 +10,28 @@ from docx.compat import Sequence
 from docx.oxml.ns import qn
 from docx.shared import lazyproperty
 
+class BookmarkMixin:
+    def start_bookmark(self, name):
+        """Return _Bookmark object identified by `name`.
+
+        The returned bookmark is anchored at the end of this block-item container.
+        """
+        finder = _DocumentBookmarkFinder(self.part)
+        if name not in finder.bookmark_names:
+            bmk_id = finder.next_id
+            bookmarkstart = self._element._add_bookmarkStart()
+            bookmarkstart.name = name
+            bookmarkstart.id = bmk_id
+        else:
+            raise KeyError("Bookmark name already present in document.")
+        return _Bookmark((bookmarkstart, None))
+
+    def end_bookmark(self, bookmark):
+        """Closes supplied bookmark at current element."""
+        bookmarkend = self._element._add_bookmarkEnd()
+        bookmarkend.id = bookmark.id
+        bookmark._bookmarkEnd = bookmarkend
+        return bookmark
 
 class Bookmarks(Sequence):
     """Sequence of |Bookmark| objects.

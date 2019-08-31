@@ -8,13 +8,14 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from docx.bookmark import BookmarkMixin
 from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
 from .run import Run
 from ..shared import Parented
 
 
-class Paragraph(Parented):
+class Paragraph(Parented, BookmarkMixin):
     """
     Proxy object wrapping ``<w:p>`` element.
     """

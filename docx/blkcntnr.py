@@ -8,13 +8,13 @@ specialized ones like structured document tags.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from docx.bookmark import _Bookmark, _DocumentBookmarkFinder
+from docx.bookmark import BookmarkMixin
 from docx.oxml.table import CT_Tbl
 from docx.shared import Parented
 from docx.text.paragraph import Paragraph
 
 
-class BlockItemContainer(Parented):
+class BlockItemContainer(Parented, BookmarkMixin):
     """Base class for proxy objects that can contain block items.
 
     These containers include _Body, _Cell, header, footer, footnote, endnote, comment,
@@ -52,13 +52,6 @@ class BlockItemContainer(Parented):
         self._element._insert_tbl(tbl)
         return Table(tbl, self)
 
-    def end_bookmark(self, bookmark):
-        """Closes supplied bookmark at current element."""
-        bookmarkend = self._element._add_bookmarkEnd()
-        bookmarkend.id = bookmark.id
-        bookmark._bookmarkEnd = bookmarkend
-        return bookmark
-
     @property
     def paragraphs(self):
         """
@@ -66,21 +59,6 @@ class BlockItemContainer(Parented):
         order. Read-only.
         """
         return [Paragraph(p, self) for p in self._element.p_lst]
-
-    def start_bookmark(self, name):
-        """Return _Bookmark object identified by `name`.
-
-        The returned bookmark is anchored at the end of this block-item container.
-        """
-        finder = _DocumentBookmarkFinder(self.part)
-        if name not in finder.bookmark_names:
-            bmk_id = finder.next_id
-            bookmarkstart = self._element._add_bookmarkStart()
-            bookmarkstart.name = name
-            bookmarkstart.id = bmk_id
-        else:
-            raise KeyError("Bookmark name already present in document.")
-        return _Bookmark((bookmarkstart, None))
 
     @property
     def tables(self):
