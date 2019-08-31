@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from itertools import chain
+
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
 from docx.oxml.shape import CT_Inline
@@ -46,6 +48,20 @@ class BaseStoryPart(XmlPart):
         wrong type or names a style not present in the document.
         """
         return self._document_part.get_style_id(style_or_name, style_type)
+
+    def iter_story_parts(self):
+        """Generate all parts in document that contain a story.
+
+        A story is a sequence of block-level items (paragraphs and tables).
+        Story parts include this main document part, headers, footers,
+        footnotes, and endnotes.
+        """
+        return chain(
+            (self,),
+            self.iter_parts_related_by(
+                {RT.COMMENTS, RT.ENDNOTES, RT.FOOTER, RT.FOOTNOTES, RT.HEADER}
+            ),
+        )
 
     def new_pic_inline(self, image_descriptor, width, height):
         """Return a newly-created `w:inline` element.

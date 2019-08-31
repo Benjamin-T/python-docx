@@ -11,6 +11,7 @@ from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.package import Package
 from docx.parts.document import DocumentPart
+from docx.parts.hdrftr import HeaderPart, FooterPart
 from docx.parts.image import ImagePart
 from docx.parts.story import BaseStoryPart
 from docx.styles.style import BaseStyle
@@ -21,7 +22,6 @@ from ..unitutil.mock import instance_mock, method_mock, property_mock
 
 
 class DescribeBaseStoryPart(object):
-
     def it_can_get_or_add_an_image(self, package_, image_part_, image_, relate_to_):
         package_.get_or_add_image_part.return_value = image_part_
         relate_to_.return_value = "rId42"
@@ -76,6 +76,20 @@ class DescribeBaseStoryPart(object):
         image_.scaled_dimensions.assert_called_once_with(100, 200)
         assert inline.xml == expected_xml
 
+    def it_can_iterate_the_story_parts(
+        self, iter_parts_related_by_, header_part_, footer_part_
+    ):
+        iter_parts_related_by_.return_value = iter((header_part_, footer_part_))
+        document_part = DocumentPart(None, None, None, None)
+
+        story_parts = document_part.iter_story_parts()
+
+        iter_parts_related_by_.assert_called_once_with(
+            document_part,
+            {RT.COMMENTS, RT.ENDNOTES, RT.FOOTER, RT.FOOTNOTES, RT.HEADER},
+        )
+        assert list(story_parts) == [document_part, header_part_, footer_part_]
+
     def it_knows_the_next_available_xml_id(self, next_id_fixture):
         story_element, expected_value = next_id_fixture
         story_part = BaseStoryPart(None, None, story_element, None)
@@ -123,8 +137,16 @@ class DescribeBaseStoryPart(object):
         return property_mock(request, BaseStoryPart, "_document_part")
 
     @pytest.fixture
+    def footer_part_(self, request):
+        return instance_mock(request, FooterPart)
+
+    @pytest.fixture
     def get_or_add_image_(self, request):
         return method_mock(request, BaseStoryPart, "get_or_add_image")
+
+    @pytest.fixture
+    def header_part_(self, request):
+        return instance_mock(request, HeaderPart)
 
     @pytest.fixture
     def image_(self, request):
@@ -133,6 +155,10 @@ class DescribeBaseStoryPart(object):
     @pytest.fixture
     def image_part_(self, request):
         return instance_mock(request, ImagePart)
+
+    @pytest.fixture
+    def iter_parts_related_by_(self, request):
+        return method_mock(request, DocumentPart, "iter_parts_related_by")
 
     @pytest.fixture
     def next_id_prop_(self, request):
