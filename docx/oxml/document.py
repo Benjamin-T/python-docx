@@ -30,6 +30,7 @@ class CT_Body(BaseOxmlElement):
     ``document.xml``.
     """
 
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd", successors=("w:sectPr",))
     bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=("w:sectPr",))
     p = ZeroOrMore("w:p", successors=("w:sectPr",))
     tbl = ZeroOrMore("w:tbl", successors=("w:sectPr",))

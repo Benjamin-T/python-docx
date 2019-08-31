@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import pytest
 
 from docx.blkcntnr import BlockItemContainer
-from docx.bookmark import Bookmarks, _DocumentBookmarkFinder
+from docx.bookmark import Bookmarks, _DocumentBookmarkFinder, _Bookmark
 from docx.shared import Inches
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -57,6 +57,21 @@ class DescribeBlockItemContainer(object):
         assert isinstance(table, Table)
         assert table._element.xml == expected_xml
         assert table._parent is blkcntnr
+
+    def it_can_close_an_open_bookmark(self, end_bookmark_fixture):
+        element_, expected_xml = end_bookmark_fixture
+
+        blkcntnr = BlockItemContainer(element_, None)
+
+        bookmarkStart = blkcntnr._element.xpath(".//w:bookmarkStart")[0]
+        bmk = _Bookmark((bookmarkStart, None))
+
+        bookmark = blkcntnr.end_bookmark(bmk)
+
+        assert bookmark.id == 0
+        assert bookmark.name == "bmk-1"
+        assert bookmark._bookmarkEnd.id == 0
+        assert blkcntnr._element.xml == expected_xml
 
     def it_provides_access_to_the_paragraphs_it_contains(self, paragraphs_fixture):
         # test len(), iterable, and indexed access
@@ -111,6 +126,32 @@ class DescribeBlockItemContainer(object):
         rows, cols, width = 2, 2, Inches(2)
         expected_xml = snippet_seq("new-tbl")[0]
         return blkcntnr, rows, cols, width, expected_xml
+
+    @pytest.fixture(
+        params=[
+            (
+                "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0})",
+                "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:body/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:body/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:ftr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:ftr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+            (
+                "w:hdr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p)",
+                "w:hdr/(w:p/(w:bookmarkStart{w:name=bmk-1, w:id=0}), w:p, w:bookmarkEnd{w:id=0})",
+            ),
+        ]
+    )
+    def end_bookmark_fixture(self, request):
+        cxml, expected_cxml = request.param
+        parent = element(cxml)
+        expected_xml = xml(expected_cxml)
+        return parent, expected_xml
 
     @pytest.fixture(
         params=[
