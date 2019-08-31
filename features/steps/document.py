@@ -174,6 +174,13 @@ def when_I_change_the_new_section_layout_to_landscape(context):
     section.page_height = new_height
 
 
+@when("I close bookmark and set document.bookmarks as bookmarks")
+def when_I_close_bookmark_and_set_document_bookmarks_as_bookmarks(context):
+    document = context.document
+    document.end_bookmark(context.bookmark)
+    context.bookmarks = document.bookmarks
+
+
 @when("I execute section = document.add_section()")
 def when_I_execute_section_eq_document_add_section(context):
     context.section = context.document.add_section()

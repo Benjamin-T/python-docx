@@ -9,3 +9,11 @@ Feature: Document properties and methods
      When I assign bookmark = document.start_bookmark("Target")
      Then bookmark.name == "Target"
       And bookmark.id is an int
+
+  @wip
+  Scenario: Document.end_bookmark()
+    Given a Document object as document
+     When I assign bookmark = document.start_bookmark("Target")
+      And I close bookmark and set document.bookmarks as bookmarks
+     Then len(bookmarks) == 2
+      And bookmarks.get(Target) returns bookmark named "Target" with id 1
