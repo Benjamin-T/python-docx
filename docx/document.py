@@ -113,6 +113,16 @@ class Document(ElementProxy):
         """
         return self._part.core_properties
 
+    def end_bookmark(self, bookmark):
+        """
+        The :func:`end_bookmark` method is used to end a bookmark. It takes a
+        :any:`Bookmark<docx.text.bookmarks.Bookmark>` as input.
+
+        :param obj bookmark: Bookmark object that needs an end.
+
+        """
+        return self._body.end_bookmark(bookmark=bookmark)
+
     @property
     def inline_shapes(self):
         """
