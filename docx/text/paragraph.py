@@ -11,7 +11,7 @@ from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import lazyproperty, Parented
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
-
+from docx.text.fields import ComplexField, _SimpleField
 
 class Paragraph(Parented):
     """
@@ -39,28 +39,17 @@ class Paragraph(Parented):
             run.style = style
         return run
 
-    def add_simplefield(self, field_name, properties):
+    def add_simplefield(self, field_name, properties=""):
         r = self._p.add_r()
         run = Run(r, self)
-        fld = run.add_field(field_name, properties)
-        return fld
+        fld = run.add_field(field_name=field_name, properties=properties)
+        return _SimpleField(fld, run)
 
-    def add_complexfield(self, fieldcode):
-        r = self._p.add_r()
-        fld_begin = r._add_fldChar()
-        fld_begin.fldCharType = "begin"
-
-        r = self._p.add_r()
-        fld  = r._add_fldChar()
-        fld.set_field(fieldcode)
-        r = self._p.add_r()
-        fld_sep = r._add_fldChar()
-        fld_sep.fldCharType = "separate"
-
-        r = self._p.add_r()
-        fld_end = r._add_fldChar()
-        fld_end.fldCharType = "end"
-        return fld
+    def add_field(self, field_name, properties="", prelim_value=None):
+        cmp_fld = ComplexField.new(self)
+        return cmp_fld.add_field(
+            field_name=field_name, properties=properties, prelim_value=prelim_value
+        )
 
     @property
     def alignment(self):

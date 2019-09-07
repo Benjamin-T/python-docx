@@ -12,8 +12,8 @@ from .base import alias, EnumMember, XmlEnumeration, XmlMappedEnumMember
 @alias('WD_FIELDCODE')
 class WD_FIELD_TYPE(XmlEnumeration):
     """
-    Specifies a standard preset color to apply. Used for font highlighting and
-    perhaps other applications.
+    Specifies a Microsoft Word field. Unless otherwise specified, the field types
+    described in this enumeration can be added to a Word document.
     """
 
     __ms_name__ = 'WdFieldType'

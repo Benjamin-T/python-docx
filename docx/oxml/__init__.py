@@ -276,4 +276,4 @@ register_element_cls("w:r", CT_R)
 register_element_cls("w:t", CT_Text)
 register_element_cls("w:fldSimple", CT_SimpleField)
 register_element_cls("w:fldChar", CT_FldChar)
-
+register_element_cls("w:instrText", CT_Text)
