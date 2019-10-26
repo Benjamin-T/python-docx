@@ -15,6 +15,7 @@ from docx.oxml.shared import qn
 from docx.oxml.simpletypes import ST_FldCharType
 from docx.shared import ElementProxy, lazyproperty
 from docx.text.run import Run
+from collections import deque
 
 
 class Fields(Sequence):
@@ -52,9 +53,8 @@ class Fields(Sequence):
 
 
 class _SimpleField(object):
-    def __init__(self, field, field_run):
-        self._fieldText = field
-        self._field_run = field_run
+    def __init__(self, field):
+        self._field_run = field
 
     @property
     def field_run(self):
@@ -62,7 +62,9 @@ class _SimpleField(object):
 
     @property
     def field_text(self):
-        return self._fieldText.instr
+        str_lst = self._field_run.fldsimple_lst
+        if len(str_lst):
+            return str_lst[0].instr
 
 
 class _Field(object):
@@ -80,14 +82,21 @@ class _Field(object):
     @property
     def field_text(self):
         str_lst = self._field_run.instrText_lst
-        if len(str_lst):
+        if str_lst:
             return str_lst[0].text
 
     @property
     def result_text(self):
         str_lst = self._result_run.instrText_lst
-        if len(str_lst):
+        if str_lst:
             return str_lst[0].text
+
+    @result_text.setter
+    def result_text(self, value):
+
+        str_lst = self._result_run._r.instrText_lst
+        if str_lst:
+            str_lst[0].text = value
 
 
 class ComplexField(ElementProxy):
@@ -190,8 +199,7 @@ class _PartFieldFinder(object):
 
     def _simplefields(self):
         return (
-            _SimpleField(fld, fld.fldsimple_lst[0])
-            for fld in self._part.element.xpath("//w:r[w:fldSimple]")
+            _SimpleField(fld) for fld in self._part.element.xpath("//w:r[w:fldSimple]")
         )
 
     def _complexfields(self):

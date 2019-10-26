@@ -17,6 +17,7 @@ from docx.parts.story import BaseStoryPart
 from docx.parts.styles import StylesPart
 from docx.shape import InlineShapes
 from docx.shared import lazyproperty
+from docx.fields import Fields
 
 
 class DocumentPart(BaseStoryPart):
@@ -44,6 +45,11 @@ class DocumentPart(BaseStoryPart):
     def bookmarks(self):
         """Singleton |Bookmarks| object for this docx package."""
         return Bookmarks(self)
+
+    @lazyproperty
+    def fields(self):
+        """Singleton |Bookmarks| object for this docx package."""
+        return Fields(self)
 
     @property
     def core_properties(self):

@@ -19,7 +19,7 @@ class Document(ElementProxy):
     a document.
     """
 
-    __slots__ = ("__body", "_bookmarks", "_part")
+    __slots__ = ("__body", "_bookmarks", "_part", "_fields")
 
     def __init__(self, element, part):
         super(Document, self).__init__(element)
@@ -115,6 +115,12 @@ class Document(ElementProxy):
     def end_bookmark(self, bookmark):
         """Closes supplied bookmark at the end of the document."""
         return self._body.end_bookmark(bookmark)
+
+    @lazyproperty
+    def fields(self):
+        """
+        """
+        return self._part.fields
 
     @property
     def inline_shapes(self):

@@ -11,7 +11,7 @@ from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import lazyproperty, Parented
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
-from docx.text.fields import ComplexField, _SimpleField
+from docx.fields import ComplexField, _SimpleField
 
 class Paragraph(Parented):
     """
@@ -43,7 +43,7 @@ class Paragraph(Parented):
         r = self._p.add_r()
         run = Run(r, self)
         fld = run.add_field(field_name=field_name, properties=properties)
-        return _SimpleField(fld, run)
+        return _SimpleField(run)
 
     def add_field(self, field_name, properties="", prelim_value=None):
         cmp_fld = ComplexField.new(self)
