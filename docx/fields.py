@@ -72,7 +72,7 @@ class _Field(object):
         self._field_run, self._result_run = field_runs
 
     @property
-    def field_run(self):
+    def code_run(self):
         return self._field_run
 
     @property
@@ -80,7 +80,7 @@ class _Field(object):
         return self._result_run
 
     @property
-    def field_text(self):
+    def code_text(self):
         str_lst = self._field_run.instrText_lst
         if str_lst:
             return str_lst[0].text
@@ -93,7 +93,6 @@ class _Field(object):
 
     @result_text.setter
     def result_text(self, value):
-
         str_lst = self._result_run._r.instrText_lst
         if str_lst:
             str_lst[0].text = value
