@@ -12,46 +12,48 @@ from docx.oxml.simpletypes import ST_Merge
 from docx.shared import ElementProxy, Inches, Parented, lazyproperty, RGBColor
 from docx.oxml.exceptions import InvalidXmlError
 
+
 class Border(ElementProxy):
     """
     Proxy wrapping the different border elements.
     """
+
     def __init__(self, element):
         super(Border, self).__init__(element, None)
         self._border = element
 
-    @classmethod
-    def new(cls, element):
-        """Creates a new border element with default settings.
+    # @classmethod
+    # def new(cls, element):
+    #     """Creates a new border element with default settings.
 
-        The default settings for the border are:
-            >>> border.val
-            >>> 'single'
-            >>> border.color
-            >>> RGBColor(0, 0, 0)
-            >>> border
-            >>> 4
-        """
-        # border = cls(element.new())
+    #     The default settings for the border are:
+    #         >>> border.val
+    #         >>> 'single'
+    #         >>> border.color
+    #         >>> RGBColor(0, 0, 0)
+    #         >>> border
+    #         >>> 4
+    #     """
+    # border = cls(element.new())
 
-        # defaults = [('val',   'single'),
-        #             ("color", RGBColor(0, 0, 0)),
-        #             ("size",  4)]
+    # defaults = [('val',   'single'),
+    #             ("color", RGBColor(0, 0, 0)),
+    #             ("size",  4)]
 
-        # for attr, value in defaults:
-        #     print(attr, value)
-        #     try:
-        #         hasattr(border._border, attr)
-        #     except InvalidXmlError:
-        #         setattr(border._border, attr, value)
-        # return cls(element.new())
-        border = cls(element)
-        try:
-            hasattr(border._border, 'val')
-        except InvalidXmlError:
-            setattr(border._border, 'val', 'single')
+    # for attr, value in defaults:
+    #     print(attr, value)
+    #     try:
+    #         hasattr(border._border, attr)
+    #     except InvalidXmlError:
+    #         setattr(border._border, attr, value)
+    # return cls(element.new())
+    # border = cls(element)
+    # try:
+    #     hasattr(border._border, 'val')
+    # except InvalidXmlError:
+    #     setattr(border._border, 'val', 'single')
 
-        return border
+    # return border
 
     @property
     def color(self):
@@ -119,39 +121,82 @@ class Borders(ElementProxy):
         for border in self._element.getchildren():
             yield Border(border)
 
-    @lazyproperty
+    @property
     def bottom(self):
-        return Border.new(self._element.get_or_add_bottom())
+        bottom = self._element.bottom_border
+        if bottom is None:
+            return None
+        return Border(bottom)
+
+    @bottom.setter
+    def bottom(self, value):
+        self._element.bottom_border = value
 
     @lazyproperty
     def borders(self):
         return [border for border in self]
 
-    @lazyproperty
+    @property
     def insideH(self):
-        return Border.new(self._element.get_or_add_insideH())
+        insideH = self._element.insideH_border
+        if insideH is None:
+            return None
+        return Border(insideH)
 
-    @lazyproperty
+    @insideH.setter
+    def insideH(self, value):
+        self._element.insideH_border = value
+
+    @property
     def insideV(self):
-        return Border.new(self._element.get_or_add_insideV())
+        insideV = self._element.insideV_border
+        if insideV is None:
+            return None
+        return Border(insideV)
 
-    @lazyproperty
+    @insideV.setter
+    def insideV(self, value):
+        self._element.insideV_border = value
+
+    @property
     def left(self):
-        return Border.new(self._element.get_or_add_left())
+        left = self._element.left_border
+        if left is None:
+            return None
+        return Border(left)
 
-    @lazyproperty
+    @left.setter
+    def left(self, value):
+        self._element.left_border = value
+
+    @property
     def right(self):
-        return Border.new(self._element.get_or_add_right())
+        right = self._element.right_border
+        if right is None:
+            return None
+        return Border(right)
 
-    @lazyproperty
+    @right.setter
+    def right(self, value):
+        self._element.right_border = value
+
+    @property
     def top(self):
-        return Border.new(self._element.get_or_add_top())
+        top = self._element.top_border
+        if top is None:
+            return None
+        return Border(top)
+
+    @top.setter
+    def top(self, value):
+        self._element.top_border = value
 
 
 class Table(Parented):
     """
     Proxy class for a WordprocessingML ``<w:tbl>`` element.
     """
+
     def __init__(self, tbl, parent):
         super(Table, self).__init__(parent)
         self._element = self._tbl = tbl
@@ -273,9 +318,7 @@ class Table(Parented):
 
     @style.setter
     def style(self, style_or_name):
-        style_id = self.part.get_style_id(
-            style_or_name, WD_STYLE_TYPE.TABLE
-        )
+        style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.TABLE)
         self._tbl.tblStyle_val = style_id
 
     @property
@@ -339,7 +382,7 @@ class _Cell(BlockItemContainer):
         super(_Cell, self).__init__(tc, parent)
         self._tc = self._element = tc
 
-    def add_paragraph(self, text='', style=None):
+    def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the content in this
         cell. If present, *text* is added to the paragraph in a single run.
@@ -405,7 +448,7 @@ class _Cell(BlockItemContainer):
         a string to this property replaces all existing content with a single
         paragraph containing the assigned text in a single run.
         """
-        return '\n'.join(p.text for p in self.paragraphs)
+        return "\n".join(p.text for p in self.paragraphs)
 
     @text.setter
     def text(self, text):
@@ -453,6 +496,7 @@ class _Column(Parented):
     """
     Table column
     """
+
     def __init__(self, gridCol, parent):
         super(_Column, self).__init__(parent)
         self._gridCol = gridCol
@@ -496,6 +540,7 @@ class _Columns(Parented):
     Sequence of |_Column| instances corresponding to the columns in a table.
     Supports ``len()``, iteration and indexed access.
     """
+
     def __init__(self, tbl, parent):
         super(_Columns, self).__init__(parent)
         self._tbl = tbl
@@ -539,6 +584,7 @@ class _Row(Parented):
     """
     Table row
     """
+
     def __init__(self, tr, parent):
         super(_Row, self).__init__(parent)
         self._tr = self._element = tr
@@ -595,6 +641,7 @@ class _Rows(Parented):
     Sequence of |_Row| objects corresponding to the rows in a table.
     Supports ``len()``, iteration, indexed access, and slicing.
     """
+
     def __init__(self, tbl, parent):
         super(_Rows, self).__init__(parent)
         self._tbl = tbl
