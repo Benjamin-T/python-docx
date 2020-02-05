@@ -67,8 +67,7 @@ from .shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)
 register_element_cls("w:titlePg", CT_OnOff)
 
-
-from .coreprops import CT_CoreProperties  # noqa
+from docx.oxml.coreprops import CT_CoreProperties
 
 register_element_cls("cp:coreProperties", CT_CoreProperties)
 
