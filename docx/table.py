@@ -22,39 +22,6 @@ class Border(ElementProxy):
         super(Border, self).__init__(element, None)
         self._border = element
 
-    # @classmethod
-    # def new(cls, element):
-    #     """Creates a new border element with default settings.
-
-    #     The default settings for the border are:
-    #         >>> border.val
-    #         >>> 'single'
-    #         >>> border.color
-    #         >>> RGBColor(0, 0, 0)
-    #         >>> border
-    #         >>> 4
-    #     """
-    # border = cls(element.new())
-
-    # defaults = [('val',   'single'),
-    #             ("color", RGBColor(0, 0, 0)),
-    #             ("size",  4)]
-
-    # for attr, value in defaults:
-    #     print(attr, value)
-    #     try:
-    #         hasattr(border._border, attr)
-    #     except InvalidXmlError:
-    #         setattr(border._border, attr, value)
-    # return cls(element.new())
-    # border = cls(element)
-    # try:
-    #     hasattr(border._border, 'val')
-    # except InvalidXmlError:
-    #     setattr(border._border, 'val', 'single')
-
-    # return border
-
     @property
     def color(self):
         return self._border.color
