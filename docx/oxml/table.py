@@ -6,13 +6,15 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
+from docx.enum.dml import MSO_THEME_COLOR
 from docx.exceptions import InvalidSpanError
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
 from docx.oxml.simpletypes import (ST_Border, ST_EighthPointMeasure,
-                                   ST_HexColor, ST_Merge, ST_TblLayoutType,
-                                   ST_TblWidth, ST_ThemeColor, ST_TwipsMeasure,
-                                   ST_PointMeasure, XsdInt, ST_OnOff)
+                                   ST_HexColor, ST_Merge, ST_OnOff,
+                                   ST_PointMeasure, ST_TblLayoutType,
+                                   ST_TblWidth, ST_TwipsMeasure,
+                                   ST_UcharHexNumber, XsdInt)
 from docx.oxml.xmlchemy import (BaseOxmlElement, OneAndOnlyOne, OneOrMore,
                                 OptionalAttribute, RequiredAttribute,
                                 ZeroOrMore, ZeroOrOne)
@@ -24,7 +26,9 @@ class CT_Border(BaseOxmlElement):
     val = RequiredAttribute('w:val', ST_Border)
     color = OptionalAttribute('w:color', ST_HexColor)
     frame = OptionalAttribute('w:frame', ST_OnOff)
-    themeColor = OptionalAttribute('w:themeColor', ST_ThemeColor)
+    themeColor = OptionalAttribute('w:themeColor', MSO_THEME_COLOR)
+    themeTint = OptionalAttribute('w:themeTint', ST_UcharHexNumber)
+    themeShade = OptionalAttribute('w:themeShade', ST_UcharHexNumber)
     sz = OptionalAttribute('w:sz', ST_EighthPointMeasure)
     space = OptionalAttribute('w:space', ST_PointMeasure)
     shadow = OptionalAttribute('w:shadow', ST_OnOff)

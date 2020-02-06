@@ -187,14 +187,7 @@ class XsdUnsignedLong(BaseIntType):
 
 class ST_Border(BaseStringEnumerationType):
     """
-    Valid values for different table border attributes.
-    Being:
-        <w:top val="">
-        <w:left val="">
-        <w:bottom val="">
-        <w:right val="">
-        <w:insideH val="">
-        <w:insideV val="">
+    Valid values for different table border attributes, i.e. `<w:top val="">`
     """
     NIL = 'nil'
     NONE = 'none'
@@ -432,31 +425,6 @@ class ST_TblWidth(XsdString):
             )
 
 
-class ST_ThemeColor(BaseStringEnumerationType):
-    """Enumerates the different themecolor options."""
-    DARK1 = 'dark1'
-    LIGHT1 = 'light1'
-    DARK2 = 'dark2'
-    LIGHT2 = 'light2'
-    ACCENT1 = 'accent1'
-    ACCENT2 = 'accent2'
-    ACCENT3 = 'accent3'
-    ACCENT4 = 'accent4'
-    ACCENT5 = 'accent5'
-    ACCENT6 = 'accent6'
-    HYPERLINK = 'hyperlink'
-    FOLLOWEDHYPERLINK = 'followedHyperlink'
-    NONE = 'none'
-    BACKGROUND1 = 'background1'
-    TEXT1 = 'text1'
-    BACKGROUND2 = 'background2'
-    TEXT2 = 'text2'
-
-    _members = (DARK1, LIGHT1, DARK2, LIGHT2, ACCENT1, ACCENT2, ACCENT3,
-                ACCENT4, ACCENT5, ACCENT6, HYPERLINK, FOLLOWEDHYPERLINK,
-                NONE, BACKGROUND1, TEXT1, BACKGROUND2, TEXT2)
-
-
 class ST_TwipsMeasure(XsdUnsignedLong):
 
     @classmethod
@@ -471,6 +439,15 @@ class ST_TwipsMeasure(XsdUnsignedLong):
         twips = emu.twips
         return str(twips)
 
+class ST_UcharHexNumber(BaseStringType):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        return int(str_value, 16)
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        return '%02X' % int(value)
 
 class ST_UniversalMeasure(BaseSimpleType):
 
